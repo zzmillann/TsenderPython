@@ -82,7 +82,9 @@ class Web3Manager:
         ).build_transaction({
             'from': self.account.address,
             'nonce': self.w3.eth.get_transaction_count(self.account.address),
-            'gasPrice': self.w3.eth.gas_price
+            'gasPrice': self.w3.eth.gas_price   
+
+            
         })
 
         signed_tx = self.w3.eth.account.sign_transaction(tx, private_key=self.private_key)
