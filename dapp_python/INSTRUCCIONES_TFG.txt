@@ -1,0 +1,83 @@
+=========================================================
+      GUÍA DE LA dAPP: TSENDER (VERSIÓN PYTHON TFG)
+=========================================================
+
+¡Hola! Esta pequeña guía te explicará cómo funciona esta
+nueva arquitectura de la aplicación hecha 100% en Python,
+ideal para tu Trabajo de Fin de Grado (TFG).
+
+---------------------------------------------------------
+1. LA NUEVA ARQUITECTURA (EL CAMBIO)
+---------------------------------------------------------
+
+
+- Capa 1 (Frontend): 'app.py' usa la librería 'Streamlit'.
+Crea toda la interfaz visual y la página web oscura.
+
+- Capa 2 (Backend Conexión Web3): 'web3_utils.py'. 
+Contiene la logica de 'Web3.py', que se conecta a la red
+y firma transacciones.
+
+- Capa 3 (Smart Contract): Siguen siendo tus archivos de Solidity.
+
+
+---------------------------------------------------------
+2. CÓMO ARRANCAR EL PROYECTO (PASO A PASO)
+---------------------------------------------------------
+Si acabas de encender el ordenador y quieres abrir y ver 
+tu dApp, siempre tienes que hacer esto en tu terminal:
+
+PASO A: Abrir terminal en la carpeta principal.
+PASO B: Entrar en la subcarpeta 'dapp_python':
+        > cd dapp_python
+PASO C: Activar el entorno virtual:
+        > .\venv\Scripts\activate
+PASO D: Lanzar el servidor visual de Streamlit:
+        > streamlit run app.py
+
+Se abrirá una ventana en tu navegador por defecto 
+en la dirección: http://localhost:8501
+
+
+---------------------------------------------------------
+3. CÓMO USAR LA APP DESDE EL NAVEGADOR
+---------------------------------------------------------
+- En la barra lateral izquierda ("Configuración Web3")
+  tendrás que meter 2 cosas para que la app se conecte a ti:
+
+  1. RPC URL: Es la conexión a tu blockchain de prueba.
+     (Puedes conseguir una gratis en infura.io o alchemy.com
+     para Sepolia o Polygon. Ej: https://rpc.sepolia.org).
+
+  2. Private Key: La Clave Privada de la cuenta de MetaMask
+     con la que vayas a pagar el "Gas" de la transacción
+     (Nunca uses una con fondos reales de Ethereum principal,
+     usa redes Testnet).
+
+
+---------------------------------------------------------
+4. LO QUE TE FALTA PARA TERMINAR EL TFG (FINAL)
+---------------------------------------------------------
+Actualmente, la UI y el backend están programados, pero
+"simulan" la transacción final ya que el contrato no está
+conectado. Para terminar tu TFG debes:
+
+1) Terminar tu Smart Contract en Solidity y desplegarlo.
+2) Cuando lo despliegues usando Remix / Hardhat, el programa
+   te dará un montón de código en formato JSON llamado "ABI".
+   (Es como el diccionario para que Python entienda el contrato).
+3) Ve al archivo 'app.py' (en la línea 150 aprox).
+4) Borra los comentarios (#) e introduce tu ABI real y la
+   dirección de tu contrato desplegado:
+
+   ABI_DEL_CONTRATO = [{... pega aquí tu json gigante ...}]
+   DIRECCION_DEL_CONTRATO = "0xTuDireccionDeContrato..."
+   
+   tx_hash = w3_manager.send_airdrop(token_address, rcp_list, amt_list, DIRECCION_DEL_CONTRATO, ABI_DEL_CONTRATO)
+   st.success(f"¡Transacción enviada! Hash: {tx_hash}")
+
+5) ¡Listo! Cuando pulses "Enviar" tu aplicación Python
+   escribirá realmente en la Blockchain.
+
+¡Mucho ánimo con la defensa del proyecto!
+=========================================================
