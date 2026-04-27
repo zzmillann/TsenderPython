@@ -60,4 +60,28 @@ contract Airdrop {
         require(msg.sender == owner, "Solo el dueno puede retirar");
         payable(owner).transfer(address(this).balance);
     }
+
+    /**
+     * @dev Distribuye ETH del balance del contrato a una lista de destinatarios.
+     * Solo el owner puede llamar a esta función.
+     * Es el equivalente a airdropTokens() pero repartiendo ETH en lugar de tokens.
+     * Flujo: donantes envían ETH via receive() → owner redistribuye con esta función.
+     */
+    function airdropETH(
+        address[] calldata recipients,
+        uint256[] calldata amounts
+    ) external {
+        require(msg.sender == owner, "Solo el dueno puede distribuir");
+        require(recipients.length == amounts.length, "Mismatch list length");
+
+        uint256 total = 0;
+        for (uint256 i = 0; i < amounts.length; i++) {
+            total += amounts[i];
+        }
+        require(address(this).balance >= total, "Saldo insuficiente en el contrato");
+
+        for (uint256 i = 0; i < recipients.length; i++) {
+            payable(recipients[i]).transfer(amounts[i]);
+        }
+    }
 }
