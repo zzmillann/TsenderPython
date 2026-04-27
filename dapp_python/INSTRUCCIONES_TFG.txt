@@ -39,6 +39,11 @@ Se abrirá una ventana en tu navegador por defecto
 en la dirección: http://localhost:8501
 
 
+
+
+
+
+
 ---------------------------------------------------------
 3. CÓMO USAR LA APP DESDE EL NAVEGADOR
 ---------------------------------------------------------
