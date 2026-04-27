@@ -202,11 +202,15 @@ st.markdown("""
     [data-testid="stVerticalBlockBorderWrapper"] {
         position: relative;
         background: rgba(11, 15, 26, 0.7);
-        border: 1px solid rgba(34,211,238,0.25) !important;
+        border: 1.5px solid rgba(34,211,238,0.62) !important;
         border-radius: 16px !important;
         padding: 0.24rem 0.24rem 0.1rem 0.24rem;
         margin: 0 0 1rem 0;
-        box-shadow: 0 12px 26px rgba(2,8,23,0.34), 0 0 12px rgba(34,211,238,0.11);
+        box-shadow:
+            0 12px 26px rgba(2,8,23,0.34),
+            0 0 18px rgba(34,211,238,0.28),
+            0 0 42px rgba(34,211,238,0.12),
+            inset 0 0 0 1px rgba(34,211,238,0.1);
         backdrop-filter: blur(10px);
         -webkit-backdrop-filter: blur(10px);
         overflow: hidden;
@@ -214,14 +218,18 @@ st.markdown("""
     [data-testid="stVerticalBlockBorderWrapper"]::before {
         content: ""; position: absolute; inset: 0; pointer-events: none;
         background:
-            radial-gradient(560px 120px at 10% -10%, rgba(34,211,238,0.12), transparent 65%),
-            radial-gradient(420px 190px at 95% 110%, rgba(14,165,233,0.1), transparent 68%);
-        opacity: 0.75;
+            radial-gradient(560px 120px at 10% -10%, rgba(34,211,238,0.18), transparent 65%),
+            radial-gradient(420px 190px at 95% 110%, rgba(14,165,233,0.14), transparent 68%);
+        opacity: 0.85;
     }
     [data-testid="stVerticalBlockBorderWrapper"]:hover {
         transform: translateY(-2px);
-        border-color: rgba(34,211,238,0.44) !important;
-        box-shadow: 0 16px 30px rgba(2,8,23,0.38), 0 0 22px rgba(34,211,238,0.2);
+        border-color: rgba(34,211,238,0.88) !important;
+        box-shadow:
+            0 16px 30px rgba(2,8,23,0.38),
+            0 0 30px rgba(34,211,238,0.45),
+            0 0 60px rgba(34,211,238,0.18),
+            inset 0 0 0 1px rgba(34,211,238,0.18);
     }
     [data-testid="stVerticalBlockBorderWrapper"]:hover::before { opacity: 1; }
     [data-testid="stVerticalBlockBorderWrapper"] h4 { font-size:1.28rem !important; font-weight:800 !important; margin-bottom:0.2rem !important; }
