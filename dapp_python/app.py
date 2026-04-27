@@ -4,11 +4,15 @@ from web3_utils import Web3Manager
 import os
 from dotenv import load_dotenv
 
+# Carga variables del archivo .env (si existe) para no escribir secretos en el código.
 load_dotenv()
 
+# Configuración general de la página de Streamlit (título, icono y ancho del layout).
 st.set_page_config(page_title="TSender", page_icon="🚀", layout="centered")
 
 # --- Custom CSS for the aesthetic ---
+# Este bloque solo cambia el estilo visual (colores, bordes, tipografías, etc.).
+# No realiza ninguna operación de blockchain ni modifica datos.
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&display=swap');
@@ -124,6 +128,13 @@ st.markdown("""
         box-shadow: 0 0 0 1px rgba(34,211,238,0.2), 0 0 12px rgba(34,211,238,0.18);
         filter: brightness(1.04);
     }
+
+    .nav-pill:hover {
+        border-color: rgba(34, 211, 238, 0.34);
+        box-shadow: 0 0 0 1px rgba(34, 211, 238, 0.2), 0 0 12px rgba(34, 211, 238, 0.18);
+        filter: brightness(1.04);
+    }
+
     .connect-btn {
         display: inline-flex; align-items: center; gap: 0.5rem;
         background: linear-gradient(135deg, rgba(14,165,233,0.24), rgba(34,211,238,0.18));
@@ -143,6 +154,7 @@ st.markdown("""
         background: radial-gradient(closest-side, rgba(34,211,238,0.25), transparent 72%);
         filter: blur(10px); pointer-events: none;
     }
+
     .main-card {
         --x: 50%; --y: 50%;
         position: relative;
@@ -359,6 +371,7 @@ with st.sidebar:
     # Estado de conexión: consulta al backend si el nodo responde.
     if w3_manager.is_connected():
         st.success("🟢 Conectado al nodo Blockchain")
+        # Si hay clave válida, se muestra dirección y balance consultando el backend.
         if w3_manager.get_address():
             st.write(f"**Billetera:**")
             st.code(w3_manager.get_address())
@@ -372,6 +385,7 @@ with st.sidebar:
 # Header superior: muestra resumen de la wallet para dar contexto al usuario.
 wallet_text = f"{w3_manager.get_address()[:6]}...{w3_manager.get_address()[-4:]}" if w3_manager.get_address() else "Esperando billetera..."
 
+# Se renderiza HTML simple para logo, navegación visual y estado de conexión.
 st.markdown(f"""
 <div class="header-container">
     <div class="header-left">
