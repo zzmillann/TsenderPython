@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Configuración general de la página de Streamlit (título, icono y ancho del layout).
-st.set_page_config(page_title="TSender", page_icon="🚀", layout="centered")
+st.set_page_config(page_title="TSender", page_icon="🚀", layout="wide")
 
 # --- Custom CSS for the aesthetic ---
 # Este bloque solo cambia el estilo visual (colores, bordes, tipografías, etc.).
@@ -43,14 +43,19 @@ st.markdown("""
     }
 
     .block-container {
-        max-width: 1140px;
-        padding-top: 4.5rem;
+        max-width: 100%;
+        padding-top: 1.8rem;
         padding-bottom: 2.4rem;
     }
 
+    section.main > div {
+        max-width: 100%;
+        width: 100%;
+    }
+
     section[data-testid="stSidebar"] {
-        background: linear-gradient(180deg, rgba(11, 15, 26, 0.97), rgba(11, 15, 26, 0.94));
-        border-right: 1px solid rgba(34, 211, 238, 0.2);
+        background: linear-gradient(180deg, rgba(11, 15, 26, 0.88), rgba(11, 15, 26, 0.84));
+        border-right: 1px solid rgba(34, 211, 238, 0.08);
     }
     section[data-testid="stSidebar"] .stMarkdown p,
     section[data-testid="stSidebar"] .stMarkdown span,
@@ -68,7 +73,7 @@ st.markdown("""
         border: 1px solid var(--border);
         background: linear-gradient(180deg, rgba(11, 15, 26, 0.72), rgba(11, 15, 26, 0.56));
         border-radius: 18px;
-        margin: 1.5rem auto 2rem auto;
+        margin: 0.55rem auto 1.75rem auto;
         box-shadow:
             0 24px 48px rgba(2, 8, 23, 0.34),
             0 0 0 1px rgba(34, 211, 238, 0.08),
@@ -199,40 +204,78 @@ st.markdown("""
     .section-title { font-size:1.15rem; color:var(--text); font-weight:700; letter-spacing:0.25px; margin:0.25rem 0 0.35rem 0; }
     .section-helper { color:var(--muted); font-size:0.93rem; margin-bottom:0.9rem; line-height:1.45; }
 
-    [data-testid="stVerticalBlockBorderWrapper"] {
+    div[data-testid="stLayoutWrapper"] > div[data-testid="stVerticalBlock"] {
         position: relative;
-        background: rgba(11, 15, 26, 0.7);
-        border: 1.5px solid rgba(34,211,238,0.62) !important;
+        background: rgba(16, 24, 36, 0.82) !important;
+        border: 2.2px solid rgba(45, 212, 191, 0.42) !important;
         border-radius: 16px !important;
-        padding: 0.24rem 0.24rem 0.1rem 0.24rem;
+        padding: 0.6rem !important;
         margin: 0 0 1rem 0;
         box-shadow:
-            0 12px 26px rgba(2,8,23,0.34),
-            0 0 18px rgba(34,211,238,0.28),
-            0 0 42px rgba(34,211,238,0.12),
-            inset 0 0 0 1px rgba(34,211,238,0.1);
+            0 14px 28px rgba(2, 8, 23, 0.38),
+            0 0 18px rgba(45, 212, 191, 0.18),
+            inset 0 0 0 1px rgba(45, 212, 191, 0.1) !important;
         backdrop-filter: blur(10px);
         -webkit-backdrop-filter: blur(10px);
         overflow: hidden;
+        transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
     }
-    [data-testid="stVerticalBlockBorderWrapper"]::before {
+    div[data-testid="stLayoutWrapper"] > div[data-testid="stVerticalBlock"]::before {
         content: ""; position: absolute; inset: 0; pointer-events: none;
         background:
-            radial-gradient(560px 120px at 10% -10%, rgba(34,211,238,0.18), transparent 65%),
-            radial-gradient(420px 190px at 95% 110%, rgba(14,165,233,0.14), transparent 68%);
-        opacity: 0.85;
+            radial-gradient(560px 120px at 10% -10%, rgba(45, 212, 191, 0.16), transparent 65%),
+            radial-gradient(420px 190px at 95% 110%, rgba(45, 212, 191, 0.08), transparent 68%);
+        opacity: 0.86;
     }
-    [data-testid="stVerticalBlockBorderWrapper"]:hover {
+    div[data-testid="stLayoutWrapper"] > div[data-testid="stVerticalBlock"]:hover {
         transform: translateY(-2px);
-        border-color: rgba(34,211,238,0.88) !important;
+        border-color: rgba(45, 212, 191, 0.65) !important;
         box-shadow:
-            0 16px 30px rgba(2,8,23,0.38),
-            0 0 30px rgba(34,211,238,0.45),
-            0 0 60px rgba(34,211,238,0.18),
-            inset 0 0 0 1px rgba(34,211,238,0.18);
+            0 18px 34px rgba(2, 8, 23, 0.42),
+            0 0 28px rgba(45, 212, 191, 0.24),
+            inset 0 0 0 1px rgba(45, 212, 191, 0.18) !important;
     }
-    [data-testid="stVerticalBlockBorderWrapper"]:hover::before { opacity: 1; }
-    [data-testid="stVerticalBlockBorderWrapper"] h4 { font-size:1.28rem !important; font-weight:800 !important; margin-bottom:0.2rem !important; }
+    div[data-testid="stLayoutWrapper"] > div[data-testid="stVerticalBlock"]:hover::before { opacity: 1; }
+    div[data-testid="stLayoutWrapper"] > div[data-testid="stVerticalBlock"] h4 { font-size:1.28rem !important; font-weight:800 !important; margin-bottom:0.2rem !important; }
+
+    /* Igualar altura de cards dentro de columnas */
+    div[data-testid="stHorizontalBlock"] > div[data-testid="stColumn"] {
+        display: flex;
+        flex-direction: column;
+    }
+    div[data-testid="stHorizontalBlock"] > div[data-testid="stColumn"] > div[data-testid="stLayoutWrapper"] {
+        display: flex;
+        flex: 1 1 auto;
+    }
+    div[data-testid="stHorizontalBlock"] > div[data-testid="stColumn"] > div[data-testid="stLayoutWrapper"] > div[data-testid="stVerticalBlock"] {
+        height: 100%;
+        flex: 1 1 auto;
+    }
+
+    /* Centrado completo para cards de métricas */
+    div[data-testid="stLayoutWrapper"] > div[data-testid="stVerticalBlock"]:has([data-testid="stMetric"]) {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+    }
+    div[data-testid="stLayoutWrapper"] > div[data-testid="stVerticalBlock"]:has([data-testid="stMetric"]) > div[data-testid="stElementContainer"] {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+    }
+    div[data-testid="stLayoutWrapper"] > div[data-testid="stVerticalBlock"]:has([data-testid="stMetric"]) [data-testid="stMetric"] {
+        align-items: center;
+        text-align: center;
+    }
+    div[data-testid="stLayoutWrapper"] > div[data-testid="stVerticalBlock"]:has([data-testid="stMetric"]) [data-testid="stMetricLabel"],
+    div[data-testid="stLayoutWrapper"] > div[data-testid="stVerticalBlock"]:has([data-testid="stMetric"]) [data-testid="stMetricValue"],
+    div[data-testid="stLayoutWrapper"] > div[data-testid="stVerticalBlock"]:has([data-testid="stMetric"]) [data-testid="stMarkdownContainer"] p {
+        text-align: center !important;
+        justify-content: center;
+        width: 100%;
+    }
 
     h3 { color: var(--text) !important; font-size: 1.62rem !important; }
     h4 { color: var(--text) !important; font-size: 1.24rem !important; }
@@ -273,9 +316,7 @@ st.markdown("""
 
     [data-testid="stTextInput"] input,
     [data-testid="stNumberInput"] input,
-    [data-testid="stTextArea"] textarea,
-    .stTextInput > div > div > input,
-    .stTextArea > div > div > textarea {
+    [data-testid="stTextArea"] textarea {
         background: linear-gradient(180deg, rgba(11,15,26,0.95), rgba(11,15,26,0.84)) !important;
         color: var(--text) !important;
         border: 1px solid rgba(34,211,238,0.25) !important;
@@ -285,16 +326,28 @@ st.markdown("""
     }
     [data-testid="stTextInput"] input:focus,
     [data-testid="stNumberInput"] input:focus,
-    [data-testid="stTextArea"] textarea:focus,
-    .stTextInput > div > div > input:focus,
-    .stTextArea > div > div > textarea:focus {
+    [data-testid="stTextArea"] textarea:focus {
         border-color: rgba(34,211,238,0.66) !important;
         box-shadow: 0 0 0 2px rgba(34,211,238,0.25) !important;
         outline: none !important;
     }
-    .stTextArea textarea { min-height: 112px !important; }
+    [data-testid="stNumberInput"] input:hover,
+    [data-testid="stNumberInput"] input:focus,
+    [data-testid="stNumberInput"] input:focus-visible,
+    [data-testid="stNumberInput"] input:active,
+    [data-testid="stNumberInput"] input:invalid {
+        border-color: rgba(34,211,238,0.66) !important;
+        box-shadow: 0 0 0 2px rgba(34,211,238,0.22) !important;
+        outline: none !important;
+    }
+    [data-testid="stTextArea"] textarea { min-height: 112px !important; }
 
     [data-baseweb="input"] {
+        background: rgba(11,15,26,0.9) !important;
+        border: 1px solid rgba(34,211,238,0.25) !important;
+        border-radius: 10px !important;
+    }
+    [data-baseweb="base-input"] {
         background: rgba(11,15,26,0.9) !important;
         border: 1px solid rgba(34,211,238,0.25) !important;
         border-radius: 10px !important;
@@ -303,31 +356,62 @@ st.markdown("""
         border-color: rgba(34,211,238,0.66) !important;
         box-shadow: 0 0 0 2px rgba(34,211,238,0.2) !important;
     }
+    [data-baseweb="base-input"]:focus-within {
+        border-color: rgba(34,211,238,0.66) !important;
+        box-shadow: 0 0 0 2px rgba(34,211,238,0.2) !important;
+    }
+    [data-testid="stNumberInput"] [data-baseweb="input"]:has(input:invalid),
+    [data-testid="stNumberInput"] [data-baseweb="base-input"]:has(input:invalid) {
+        border-color: rgba(34,211,238,0.66) !important;
+        box-shadow: 0 0 0 2px rgba(34,211,238,0.2) !important;
+    }
+    [data-testid="stNumberInput"] [data-baseweb="input"]:hover,
+    [data-testid="stNumberInput"] [data-baseweb="input"]:focus-within {
+        border-color: rgba(34,211,238,0.66) !important;
+        box-shadow: 0 0 0 2px rgba(34,211,238,0.2) !important;
+    }
+    [data-testid="stNumberInput"] [data-baseweb="base-input"]:hover,
+    [data-testid="stNumberInput"] [data-baseweb="base-input"]:focus-within {
+        border-color: rgba(34,211,238,0.66) !important;
+        box-shadow: 0 0 0 2px rgba(34,211,238,0.2) !important;
+    }
+    [data-testid="stNumberInput"] button {
+        background: rgba(11,15,26,0.92) !important;
+        color: var(--text) !important;
+        border-left: 1px solid rgba(34,211,238,0.3) !important;
+    }
+    [data-testid="stNumberInput"] button:hover {
+        background: rgba(34,211,238,0.14) !important;
+        color: var(--text) !important;
+    }
 
-    [data-testid="stButton"] button,
-    div.stButton > button:first-child {
-        background: linear-gradient(135deg, var(--brand-1), var(--brand-2));
+    [data-testid="stButton"] button {
+        background: rgba(34,211,238,0.12);
         color: var(--text); font-weight: 800;
-        border: 1px solid rgba(34,211,238,0.34);
+        border: 1px solid rgba(34,211,238,0.28);
         width: 100%; padding: 0.8rem 1.1rem;
         border-radius: 10px;
         margin-top: 0.95rem;
-        box-shadow: 0 14px 26px rgba(34,211,238,0.25);
+        box-shadow: 0 8px 16px rgba(34,211,238,0.1);
         letter-spacing: 0.2px;
+        transition: all 0.25s ease;
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
     }
-    [data-testid="stButton"] button:hover,
-    div.stButton > button:first-child:hover {
-        transform: translateY(-2px); filter: brightness(1.1);
-        box-shadow: 0 18px 30px rgba(34,211,238,0.3), 0 0 18px rgba(34,211,238,0.22);
+    [data-testid="stButton"] button:hover {
+        background: rgba(34,211,238,0.18);
+        border-color: rgba(34,211,238,0.45);
+        box-shadow: 0 10px 24px rgba(34,211,238,0.18);
         color: var(--text);
     }
-    [data-testid="stButton"] button:active,
-    div.stButton > button:first-child:active {
-        transform: translateY(1px); filter: brightness(0.98);
-        box-shadow: 0 8px 16px rgba(34,211,238,0.22);
+    [data-testid="stButton"] button:active {
+        background: rgba(34,211,238,0.14);
+        box-shadow: 0 6px 12px rgba(34,211,238,0.12);
     }
 
-    .stTextInput label, .stTextArea label, .stNumberInput label {
+    [data-testid="stTextInput"] label,
+    [data-testid="stTextArea"] label,
+    [data-testid="stNumberInput"] label {
         color: var(--text) !important; font-size: 0.92rem !important; font-weight: 600 !important;
     }
 
@@ -433,76 +517,122 @@ tab1, tab2, tab3 = st.tabs(["Dashboard", "Airdrop", "Deploy"])
 
 with tab1:
     # TAB 1: panel de estado, donaciones y lectura de donantes.
-    st.markdown("<div class='section-title'>Fund Me: La Hucha del Proyecto</div>", unsafe_allow_html=True)
-    st.markdown("<div class='section-helper'>Gestiona las donaciones del proyecto y consulta el estado de la hucha en tiempo real.</div>", unsafe_allow_html=True)
-
+    st.markdown("<div class='section-title'>Resumen de Cuenta</div>", unsafe_allow_html=True)
+    st.markdown("<div class='section-helper'>Consulta tu wallet, revisa contratos y gestiona donaciones desde un único panel.</div>", unsafe_allow_html=True)
+    st.markdown("### Tu balance y estado")
+    # Si no hay wallet, se bloquean acciones que requieren firma de transacción.
     if w3_manager.get_address():
-        # --- SECCIÓN SUPERIOR: ESTADO DE LA HUCHA ---
-        col_h1, col_h2 = st.columns([1, 2])
-        
-        with col_h1:
-            with st.container(border=True):
-                st.markdown("#### Mi Billetera")
-                st.write(f"`{w3_manager.get_address()[:10]}...{w3_manager.get_address()[-8:]}`")
-                st.metric("Mi Saldo", f"{float(w3_manager.get_balance()):.4f} ETH")
+        # Fila superior: tres métricas clave (wallet, balance y balance de contrato).
+        with st.container(border=True):
+            st.markdown("#### Balance")
+            st.caption("Estado de tu wallet y consulta rápida de contratos.")
+            col_metric_1, col_metric_2, col_metric_3 = st.columns(3)
 
-        with col_h2:
-            with st.container(border=True):
-                st.markdown("#### Estado de la Hucha")
-                hucha_addr = st.text_input("Dirección del Contrato (Airdrop)", placeholder="0x...", key="hucha_addr")
-                if hucha_addr:
-                    try:
-                        hucha_balance = w3_manager.get_contract_eth_balance(hucha_addr)
-                        st.metric("Total Recaudado", f"{float(hucha_balance):.4f} ETH", delta="Blockchain Live")
-                    except:
-                        st.error("Dirección no válida")
-                else:
-                    st.info("Introduce la dirección del contrato Airdrop para ver la recaudación.")
+            with col_metric_1:
+                with st.container(border=True):
+                    wallet_addr = w3_manager.get_address()
+                    st.caption("Wallet")
+                    st.metric(" ", f"{wallet_addr[:6]}...{wallet_addr[-4:]}")
+                    st.caption(wallet_addr)
 
-        # --- SECCIÓN CENTRAL: DONAR Y LISTA ---
-        col_d1, col_d2 = st.columns(2)
+            with col_metric_2:
+                with st.container(border=True):
+                    st.caption("Balance")
+                    st.metric(" ", f"{float(w3_manager.get_balance()):.4f} ETH")
 
-        with col_d1:
-            with st.container(border=True):
-                st.markdown("#### ❤️ Realizar Donación")
-                st.caption("Tu donación se registrará permanentemente en la blockchain.")
-                amount_to_donate = st.number_input("Cantidad (ETH)", min_value=0.0001, format="%.4f", key="amt_don")
-                
-                if st.button("Enviar Donación", use_container_width=True):
-                    if hucha_addr:
+            with col_metric_3:
+                with st.container(border=True):
+                    st.caption("Contract Balance")
+                    contract_to_check = st.text_input("Contrato para consulta", placeholder="0x...", key="check_balance")
+                    if contract_to_check:
                         try:
-                            with st.spinner("Procesando en la red..."):
-                                tx = w3_manager.donate_eth(hucha_addr, amount_to_donate)
-                                st.success("¡Donación recibida!")
-                                st.balloons()
-                        except Exception as e:
-                            st.error(f"Error: {e}")
+                            # Llamada backend: get_contract_eth_balance() solo lee estado en cadena.
+                            c_balance = w3_manager.get_contract_eth_balance(contract_to_check)
+                            st.metric(" ", f"{float(c_balance):.4f} ETH")
+                        except Exception:
+                            st.metric(" ", "-")
+                            st.error("Dirección no válida")
                     else:
-                        st.warning("Primero indica la dirección de la hucha arriba.")
+                        st.metric(" ", "-")
 
-        with col_d2:
-            with st.container(border=True):
-                st.markdown("#### 📜 Muro de Donantes")
-                st.caption("Lista automática de personas que han apoyado el proyecto.")
-                
-                if hucha_addr:
-                    try:
-                        donors_data = w3_manager.get_donors_data(hucha_addr)
-                        if donors_data:
-                            # Creamos una lista visualmente atractiva
-                            for donor in donors_data:
-                                with st.expander(f"👤 {donor['address'][:10]}..."):
-                                    st.write("**Dirección completa:**")
-                                    st.code(donor['address'])
-                                    st.write(f"**Total donado:** {donor['amount']:.4f} ETH")
-                        else:
-                            st.write("Aún no hay donantes. ¡Sé el primero!")
-                    except:
-                        st.write("Esperando conexión...")
+        # Fila inferior: izquierda donaciones, derecha lista de donantes.
+        col_left, col_right = st.columns(2)
+
+        with col_left:
+            with st.container(border=True, height=500):
+                st.markdown("#### Donaciones")
+                st.caption("Introduce contrato y monto. Al confirmar, se firma y envía una transacción en blockchain.")
+                st.markdown("##### Realizar donación al contrato")
+
+                if "donation_feedback_kind" not in st.session_state:
+                    st.session_state["donation_feedback_kind"] = "caption"
+                    st.session_state["donation_feedback_text"] = "El estado de la donación aparecerá aquí."
+
+                target_contract = st.text_input("Dirección Contrato Destino", placeholder="0x...", key="donate_addr")
+                donation_amount = st.number_input("Cantidad a donar (ETH)", min_value=0.0001, format="%.4f")
+                donation_feedback_kind = st.session_state["donation_feedback_kind"]
+                donation_feedback_text = st.session_state["donation_feedback_text"]
+                if donation_feedback_kind == "success":
+                    st.success(donation_feedback_text)
+                elif donation_feedback_kind == "warning":
+                    st.warning(donation_feedback_text)
+                elif donation_feedback_kind == "error":
+                    st.error(donation_feedback_text)
                 else:
-                    st.write("Configura la dirección arriba para ver el muro.")
+                    st.caption(donation_feedback_text)
+                # Al pulsar este botón se firma y envía una transacción real de ETH.
+                donate_clicked = st.button("Donar ahora", use_container_width=True)
+                if donate_clicked:
+                    if target_contract:
+                        try:
+                            with st.spinner("Procesando donación..."):
+                                # Llamada backend: donate_eth() construye, firma y envía la transacción.
+                                tx = w3_manager.donate_eth(target_contract, donation_amount)
+                            st.session_state["donation_feedback_kind"] = "success"
+                            st.session_state["donation_feedback_text"] = f"¡Donación exitosa! TX: {tx[:10]}..."
+                            st.balloons()
+                        except Exception as e:
+                            st.session_state["donation_feedback_kind"] = "error"
+                            st.session_state["donation_feedback_text"] = f"Error: {e}"
+                    else:
+                        st.session_state["donation_feedback_kind"] = "warning"
+                        st.session_state["donation_feedback_text"] = "Pon la dirección del contrato."
+                    st.rerun()
+
+        with col_right:
+            with st.container(border=True, height=500):
+                st.markdown("#### Lista de donantes")
+                st.caption("Esta acción solo consulta datos en cadena y no consume firma de transacción.")
+
+                # Input: dirección del contrato a consultar
+                donor_contract = st.text_input("Contrato a consultar", placeholder="0x...", key="view_donors")
+                st.write("")
+                # Botón de acción destacado a ancho completo
+                # Este botón solo hace lectura del contrato (no envía transacción).
+                load_clicked = st.button("Cargar lista de donantes", use_container_width=True)
+
+                # Área de resultados — ocupa el espacio restante del card
+                st.divider()
+                if load_clicked:
+                    if donor_contract:
+                        try:
+                            # Llamada backend: get_donors_list() ejecuta una llamada .call().
+                            donors = w3_manager.get_donors_list(donor_contract)
+                            if donors:
+                                for d in donors:
+                                    st.code(d)
+                            else:
+                                st.info("Aún no hay donantes registrados en este contrato.")
+                        except Exception as e:
+                            st.error(f"No se pudo cargar la lista: {e}")
+                    else:
+                        st.warning("Introduce la dirección del contrato.")
+                else:
+                    st.caption("Los donantes aparecerán aquí tras cargar la lista.")
     else:
-        st.error("Conecta tu billetera en el menú lateral para acceder al Fund Me.")
+        with st.container(border=True):
+            st.markdown("#### Balance")
+            st.error("Conecta tu billetera en el menú lateral para ver tu balance y opciones.")
 
 with tab2:
     # TAB 2: flujo de airdrop en dos pasos: aprobar y luego enviar.
@@ -553,8 +683,7 @@ with tab2:
                     # Llamada backend: send_airdrop() firma y envía la transacción del contrato.
                     tx = w3_manager.send_airdrop(airdrop_contract, token_address, rcp_list, amt_list)
                     st.success(f"Airdrop ejecutado con éxito")
-                    st.write("**TX Hash:**")
-                    st.code(tx)
+                    st.code(f"TX Hash: {tx}")
                     st.balloons()
             except Exception as e:
                 st.error(f"Error: {e}")
@@ -572,33 +701,23 @@ with tab3:
         # Botón de despliegue del contrato de token.
         if st.button("Lanzar token"):
             try:
-                # Informamos que esto puede tardar un poco en la blockchain
-                with st.spinner("Enviando transacción y esperando confirmación (aprox. 1-2 min)..."):
+                with st.spinner("Desplegando Token..."):
                     # Llamada backend: deploy_contract('CosaToken') publica el contrato.
                     res = w3_manager.deploy_contract('CosaToken')
-                    st.success(f"¡Token desplegado con éxito!")
-                    st.write("**Dirección del Contrato:**")
+                    st.success(f"Token en: `{res['address']}`")
                     st.code(res['address'])
-                    st.write("**TX Hash:**")
-                    st.code(res['tx_hash'])
-                    st.balloons()
             except Exception as e:
-                st.error(f"Error en el despliegue: {e}")
-                st.info("Tip: Si se queda mucho tiempo, revisa tu balance o prueba con otra RPC.")
+                st.error(f"Error: {e}")
 
     with col2:
         st.markdown("#### 2. Airdrop Contract")
         # Botón de despliegue del contrato de airdrop.
         if st.button("Lanzar airdrop"):
             try:
-                with st.spinner("Enviando transacción y esperando confirmación..."):
+                with st.spinner("Desplegando Airdrop..."):
                     # Llamada backend: deploy_contract('Airdrop') publica el contrato.
                     res = w3_manager.deploy_contract('Airdrop')
-                    st.success(f"¡Airdrop desplegado con éxito!")
-                    st.write("**Dirección del Contrato:**")
+                    st.success(f"Airdrop en: `{res['address']}`")
                     st.code(res['address'])
-                    st.write("**TX Hash:**")
-                    st.code(res['tx_hash'])
-                    st.balloons()
             except Exception as e:
-                st.error(f"Error en el despliegue: {e}")
+                st.error(f"Error: {e}")
