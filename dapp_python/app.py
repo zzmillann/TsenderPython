@@ -54,8 +54,8 @@ st.markdown("""
     }
 
     section[data-testid="stSidebar"] {
-        background: linear-gradient(180deg, rgba(11, 15, 26, 0.97), rgba(11, 15, 26, 0.94));
-        border-right: 1px solid rgba(34, 211, 238, 0.2);
+        background: linear-gradient(180deg, rgba(11, 15, 26, 0.88), rgba(11, 15, 26, 0.84));
+        border-right: 1px solid rgba(34, 211, 238, 0.08);
     }
     section[data-testid="stSidebar"] .stMarkdown p,
     section[data-testid="stSidebar"] .stMarkdown span,
@@ -278,9 +278,7 @@ st.markdown("""
 
     [data-testid="stTextInput"] input,
     [data-testid="stNumberInput"] input,
-    [data-testid="stTextArea"] textarea,
-    .stTextInput > div > div > input,
-    .stTextArea > div > div > textarea {
+    [data-testid="stTextArea"] textarea {
         background: linear-gradient(180deg, rgba(11,15,26,0.95), rgba(11,15,26,0.84)) !important;
         color: var(--text) !important;
         border: 1px solid rgba(34,211,238,0.25) !important;
@@ -290,14 +288,12 @@ st.markdown("""
     }
     [data-testid="stTextInput"] input:focus,
     [data-testid="stNumberInput"] input:focus,
-    [data-testid="stTextArea"] textarea:focus,
-    .stTextInput > div > div > input:focus,
-    .stTextArea > div > div > textarea:focus {
+    [data-testid="stTextArea"] textarea:focus {
         border-color: rgba(34,211,238,0.66) !important;
         box-shadow: 0 0 0 2px rgba(34,211,238,0.25) !important;
         outline: none !important;
     }
-    .stTextArea textarea { min-height: 112px !important; }
+    [data-testid="stTextArea"] textarea { min-height: 112px !important; }
 
     [data-baseweb="input"] {
         background: rgba(11,15,26,0.9) !important;
@@ -309,30 +305,33 @@ st.markdown("""
         box-shadow: 0 0 0 2px rgba(34,211,238,0.2) !important;
     }
 
-    [data-testid="stButton"] button,
-    div.stButton > button:first-child {
-        background: linear-gradient(135deg, var(--brand-1), var(--brand-2));
+    [data-testid="stButton"] button {
+        background: rgba(34,211,238,0.12);
         color: var(--text); font-weight: 800;
-        border: 1px solid rgba(34,211,238,0.34);
+        border: 1px solid rgba(34,211,238,0.28);
         width: 100%; padding: 0.8rem 1.1rem;
         border-radius: 10px;
         margin-top: 0.95rem;
-        box-shadow: 0 14px 26px rgba(34,211,238,0.25);
+        box-shadow: 0 8px 16px rgba(34,211,238,0.1);
         letter-spacing: 0.2px;
+        transition: all 0.25s ease;
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
     }
-    [data-testid="stButton"] button:hover,
-    div.stButton > button:first-child:hover {
-        transform: translateY(-2px); filter: brightness(1.1);
-        box-shadow: 0 18px 30px rgba(34,211,238,0.3), 0 0 18px rgba(34,211,238,0.22);
+    [data-testid="stButton"] button:hover {
+        background: rgba(34,211,238,0.18);
+        border-color: rgba(34,211,238,0.45);
+        box-shadow: 0 10px 24px rgba(34,211,238,0.18);
         color: var(--text);
     }
-    [data-testid="stButton"] button:active,
-    div.stButton > button:first-child:active {
-        transform: translateY(1px); filter: brightness(0.98);
-        box-shadow: 0 8px 16px rgba(34,211,238,0.22);
+    [data-testid="stButton"] button:active {
+        background: rgba(34,211,238,0.14);
+        box-shadow: 0 6px 12px rgba(34,211,238,0.12);
     }
 
-    .stTextInput label, .stTextArea label, .stNumberInput label {
+    [data-testid="stTextInput"] label,
+    [data-testid="stTextArea"] label,
+    [data-testid="stNumberInput"] label {
         color: var(--text) !important; font-size: 0.92rem !important; font-weight: 600 !important;
     }
 
