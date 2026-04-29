@@ -73,11 +73,6 @@ class Web3Manager:
     def deploy_contract(self, contract_name):
         """
         Despliega un contrato nuevo en la blockchain.
-        El flujo es:
-          1. Construye la transacción de despliegue con el bytecode del contrato.
-          2. La firma con nuestra private key (offline, nunca sale a internet sin firmar).
-          3. La envía a la red y espera la confirmación del bloque.
-          4. Devuelve la dirección donde quedó desplegado el contrato y el hash de la tx.
         """
         if not self.account:
             raise Exception("Configura tu Private Key.")
@@ -85,23 +80,33 @@ class Web3Manager:
         abi, bytecode = self._get_contract_data(contract_name)
         Contract = self.w3.eth.contract(abi=abi, bytecode=bytecode)
 
+        # Boost gas price by 20% to avoid getting stuck
+        current_gas_price = self.w3.eth.gas_price
+        gas_price = int(current_gas_price * 1.2)
+
         tx = Contract.constructor().build_transaction({
             'from': self.account.address,
             'nonce': self.w3.eth.get_transaction_count(self.account.address),
             'gas': 2000000,
-            'gasPrice': self.w3.eth.gas_price
+            'gasPrice': gas_price,
+            'chainId': self.w3.eth.chain_id
         })
 
         signed_tx = self.w3.eth.account.sign_transaction(tx, private_key=self.private_key)
         tx_hash = self.w3.eth.send_raw_transaction(signed_tx.raw_transaction)
         
-        # Esperamos a que la tx sea incluida en un bloque antes de devolver la dirección
-        receipt = self.w3.eth.wait_for_transaction_receipt(tx_hash)
-
-        return {
-            "address": receipt.contractAddress,
-            "tx_hash": self.w3.to_hex(tx_hash)
-        }
+        tx_hex = self.w3.to_hex(tx_hash)
+        print(f"Transacción enviada: {tx_hex}")
+        
+        # Esperamos a que la tx sea incluida en un bloque (máximo 5 min)
+        try:
+            receipt = self.w3.eth.wait_for_transaction_receipt(tx_hash, timeout=300)
+            return {
+                "address": receipt.contractAddress,
+                "tx_hash": tx_hex
+            }
+        except Exception as e:
+            raise Exception(f"Tiempo de espera agotado o error: {tx_hex}. Revisa en Etherscan.")
 
     def approve_airdrop(self, token_address, airdrop_address, amount):
         """
@@ -113,22 +118,30 @@ class Web3Manager:
         abi, _ = self._get_contract_data('CosaToken')
         token_contract = self.w3.eth.contract(address=Web3.to_checksum_address(token_address), abi=abi)
         
+        # Boost gas price
+        current_gas_price = self.w3.eth.gas_price
+        gas_price = int(current_gas_price * 1.2)
+
         tx = token_contract.functions.approve(
             Web3.to_checksum_address(airdrop_address),
             amount
         ).build_transaction({
             'from': self.account.address,
             'nonce': self.w3.eth.get_transaction_count(self.account.address),
-            'gasPrice': self.w3.eth.gas_price   
+            'gasPrice': gas_price,
+            'chainId': self.w3.eth.chain_id
         })
 
         signed_tx = self.w3.eth.account.sign_transaction(tx, private_key=self.private_key)
         tx_hash = self.w3.eth.send_raw_transaction(signed_tx.raw_transaction)
         
-        # Esperamos confirmación antes de dar el paso 2 (enviar el airdrop)
-        self.w3.eth.wait_for_transaction_receipt(tx_hash)
+        tx_hex = self.w3.to_hex(tx_hash)
+        print(f"Approve enviado: {tx_hex}")
         
-        return self.w3.to_hex(tx_hash)
+        # Esperamos confirmación (máximo 5 min)
+        self.w3.eth.wait_for_transaction_receipt(tx_hash, timeout=300)
+        
+        return tx_hex
 
     def send_airdrop(self, airdrop_address, token_address, recipients, amounts):
         """
@@ -140,6 +153,10 @@ class Web3Manager:
         abi, _ = self._get_contract_data('Airdrop')
         airdrop_contract = self.w3.eth.contract(address=Web3.to_checksum_address(airdrop_address), abi=abi)
 
+        # Boost gas price
+        current_gas_price = self.w3.eth.gas_price
+        gas_price = int(current_gas_price * 1.2)
+
         tx = airdrop_contract.functions.airdropTokens(
             Web3.to_checksum_address(token_address),
             [Web3.to_checksum_address(r) for r in recipients],
@@ -148,13 +165,18 @@ class Web3Manager:
             'from': self.account.address,
             'nonce': self.w3.eth.get_transaction_count(self.account.address),
             'gas': 3000000,
-            'gasPrice': self.w3.eth.gas_price
+            'gasPrice': gas_price,
+            'chainId': self.w3.eth.chain_id
         })
 
         signed_tx = self.w3.eth.account.sign_transaction(tx, private_key=self.private_key)
         tx_hash = self.w3.eth.send_raw_transaction(signed_tx.raw_transaction)
-        self.w3.eth.wait_for_transaction_receipt(tx_hash)
-        return self.w3.to_hex(tx_hash)
+        
+        tx_hex = self.w3.to_hex(tx_hash)
+        print(f"Airdrop enviado: {tx_hex}")
+        
+        self.w3.eth.wait_for_transaction_receipt(tx_hash, timeout=300)
+        return tx_hex
 
     # --- FUNCIONES PARA EL DASHBOARD ---
 
@@ -170,13 +192,28 @@ class Web3Manager:
     def get_donors_list(self, contract_address):
         """
         Llama a getDonors() en el contrato Airdrop.
-        El contrato mantiene un array interno con todas las direcciones que han donado,
-        y esta función lo devuelve completo. Es una llamada de solo lectura (call),
-        no genera transacción ni consume gas.
         """
         abi, _ = self._get_contract_data('Airdrop')
         contract = self.w3.eth.contract(address=Web3.to_checksum_address(contract_address), abi=abi)
         return contract.functions.getDonors().call()
+
+    def get_donors_data(self, contract_address):
+        """
+        [NUEVA FUNCIÓN] Devuelve una lista de diccionarios con la dirección y la cantidad total 
+        donada por cada usuario. Útil para el "Fund Me" del dashboard.
+        """
+        donors = self.get_donors_list(contract_address)
+        abi, _ = self._get_contract_data('Airdrop')
+        contract = self.w3.eth.contract(address=Web3.to_checksum_address(contract_address), abi=abi)
+        
+        data = []
+        for d in donors:
+            amount_wei = contract.functions.donationAmount(Web3.to_checksum_address(d)).call()
+            data.append({
+                "address": d,
+                "amount": float(self.w3.from_wei(amount_wei, 'ether'))
+            })
+        return data
 
     def donate_eth(self, contract_address, amount_eth):
         """
@@ -184,18 +221,26 @@ class Web3Manager:
         El contrato tiene una función receive() que se activa automáticamente
         cuando recibe ETH sin datos. Eso registra al donante en su lista interna.
         """
+        # Boost gas price
+        current_gas_price = self.w3.eth.gas_price
+        gas_price = int(current_gas_price * 1.2)
+
         tx = {
             'to': Web3.to_checksum_address(contract_address),
             'value': self.w3.to_wei(amount_eth, 'ether'),
             'gas': 200000,
-            'gasPrice': self.w3.eth.gas_price,
+            'gasPrice': gas_price,
             'nonce': self.w3.eth.get_transaction_count(self.account.address),
             'chainId': self.w3.eth.chain_id
         }
         signed_tx = self.w3.eth.account.sign_transaction(tx, private_key=self.private_key)
         tx_hash = self.w3.eth.send_raw_transaction(signed_tx.raw_transaction)
-        self.w3.eth.wait_for_transaction_receipt(tx_hash)
-        return self.w3.to_hex(tx_hash)
+        
+        tx_hex = self.w3.to_hex(tx_hash)
+        print(f"Donación enviada: {tx_hex}")
+        
+        self.w3.eth.wait_for_transaction_receipt(tx_hash, timeout=300)
+        return tx_hex
 
     # --- NUEVAS FUNCIONES ---
 
