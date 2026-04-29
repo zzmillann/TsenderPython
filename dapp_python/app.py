@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Configuración general de la página de Streamlit (título, icono y ancho del layout).
-st.set_page_config(page_title="TSender", page_icon="🚀", layout="centered")
+st.set_page_config(page_title="TSender", page_icon="🚀", layout="wide")
 
 # --- Custom CSS for the aesthetic ---
 # Este bloque solo cambia el estilo visual (colores, bordes, tipografías, etc.).
@@ -43,9 +43,14 @@ st.markdown("""
     }
 
     .block-container {
-        max-width: 1140px;
+        max-width: 100%;
         padding-top: 1.8rem;
         padding-bottom: 2.4rem;
+    }
+
+    section.main > div {
+        max-width: 100%;
+        width: 100%;
     }
 
     section[data-testid="stSidebar"] {
