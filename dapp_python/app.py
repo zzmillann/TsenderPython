@@ -204,40 +204,78 @@ st.markdown("""
     .section-title { font-size:1.15rem; color:var(--text); font-weight:700; letter-spacing:0.25px; margin:0.25rem 0 0.35rem 0; }
     .section-helper { color:var(--muted); font-size:0.93rem; margin-bottom:0.9rem; line-height:1.45; }
 
-    [data-testid="stVerticalBlockBorderWrapper"] {
+    div[data-testid="stLayoutWrapper"] > div[data-testid="stVerticalBlock"] {
         position: relative;
-        background: rgba(11, 15, 26, 0.7);
-        border: 1.5px solid rgba(34,211,238,0.62) !important;
+        background: rgba(16, 24, 36, 0.82) !important;
+        border: 2.2px solid rgba(45, 212, 191, 0.42) !important;
         border-radius: 16px !important;
-        padding: 0.24rem 0.24rem 0.1rem 0.24rem;
+        padding: 0.6rem !important;
         margin: 0 0 1rem 0;
         box-shadow:
-            0 12px 26px rgba(2,8,23,0.34),
-            0 0 18px rgba(34,211,238,0.28),
-            0 0 42px rgba(34,211,238,0.12),
-            inset 0 0 0 1px rgba(34,211,238,0.1);
+            0 14px 28px rgba(2, 8, 23, 0.38),
+            0 0 18px rgba(45, 212, 191, 0.18),
+            inset 0 0 0 1px rgba(45, 212, 191, 0.1) !important;
         backdrop-filter: blur(10px);
         -webkit-backdrop-filter: blur(10px);
         overflow: hidden;
+        transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
     }
-    [data-testid="stVerticalBlockBorderWrapper"]::before {
+    div[data-testid="stLayoutWrapper"] > div[data-testid="stVerticalBlock"]::before {
         content: ""; position: absolute; inset: 0; pointer-events: none;
         background:
-            radial-gradient(560px 120px at 10% -10%, rgba(34,211,238,0.18), transparent 65%),
-            radial-gradient(420px 190px at 95% 110%, rgba(14,165,233,0.14), transparent 68%);
-        opacity: 0.85;
+            radial-gradient(560px 120px at 10% -10%, rgba(45, 212, 191, 0.16), transparent 65%),
+            radial-gradient(420px 190px at 95% 110%, rgba(45, 212, 191, 0.08), transparent 68%);
+        opacity: 0.86;
     }
-    [data-testid="stVerticalBlockBorderWrapper"]:hover {
+    div[data-testid="stLayoutWrapper"] > div[data-testid="stVerticalBlock"]:hover {
         transform: translateY(-2px);
-        border-color: rgba(34,211,238,0.88) !important;
+        border-color: rgba(45, 212, 191, 0.65) !important;
         box-shadow:
-            0 16px 30px rgba(2,8,23,0.38),
-            0 0 30px rgba(34,211,238,0.45),
-            0 0 60px rgba(34,211,238,0.18),
-            inset 0 0 0 1px rgba(34,211,238,0.18);
+            0 18px 34px rgba(2, 8, 23, 0.42),
+            0 0 28px rgba(45, 212, 191, 0.24),
+            inset 0 0 0 1px rgba(45, 212, 191, 0.18) !important;
     }
-    [data-testid="stVerticalBlockBorderWrapper"]:hover::before { opacity: 1; }
-    [data-testid="stVerticalBlockBorderWrapper"] h4 { font-size:1.28rem !important; font-weight:800 !important; margin-bottom:0.2rem !important; }
+    div[data-testid="stLayoutWrapper"] > div[data-testid="stVerticalBlock"]:hover::before { opacity: 1; }
+    div[data-testid="stLayoutWrapper"] > div[data-testid="stVerticalBlock"] h4 { font-size:1.28rem !important; font-weight:800 !important; margin-bottom:0.2rem !important; }
+
+    /* Igualar altura de cards dentro de columnas */
+    div[data-testid="stHorizontalBlock"] > div[data-testid="stColumn"] {
+        display: flex;
+        flex-direction: column;
+    }
+    div[data-testid="stHorizontalBlock"] > div[data-testid="stColumn"] > div[data-testid="stLayoutWrapper"] {
+        display: flex;
+        flex: 1 1 auto;
+    }
+    div[data-testid="stHorizontalBlock"] > div[data-testid="stColumn"] > div[data-testid="stLayoutWrapper"] > div[data-testid="stVerticalBlock"] {
+        height: 100%;
+        flex: 1 1 auto;
+    }
+
+    /* Centrado completo para cards de métricas */
+    div[data-testid="stLayoutWrapper"] > div[data-testid="stVerticalBlock"]:has([data-testid="stMetric"]) {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+    }
+    div[data-testid="stLayoutWrapper"] > div[data-testid="stVerticalBlock"]:has([data-testid="stMetric"]) > div[data-testid="stElementContainer"] {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+    }
+    div[data-testid="stLayoutWrapper"] > div[data-testid="stVerticalBlock"]:has([data-testid="stMetric"]) [data-testid="stMetric"] {
+        align-items: center;
+        text-align: center;
+    }
+    div[data-testid="stLayoutWrapper"] > div[data-testid="stVerticalBlock"]:has([data-testid="stMetric"]) [data-testid="stMetricLabel"],
+    div[data-testid="stLayoutWrapper"] > div[data-testid="stVerticalBlock"]:has([data-testid="stMetric"]) [data-testid="stMetricValue"],
+    div[data-testid="stLayoutWrapper"] > div[data-testid="stVerticalBlock"]:has([data-testid="stMetric"]) [data-testid="stMarkdownContainer"] p {
+        text-align: center !important;
+        justify-content: center;
+        width: 100%;
+    }
 
     h3 { color: var(--text) !important; font-size: 1.62rem !important; }
     h4 { color: var(--text) !important; font-size: 1.24rem !important; }
@@ -293,6 +331,15 @@ st.markdown("""
         box-shadow: 0 0 0 2px rgba(34,211,238,0.25) !important;
         outline: none !important;
     }
+    [data-testid="stNumberInput"] input:hover,
+    [data-testid="stNumberInput"] input:focus,
+    [data-testid="stNumberInput"] input:focus-visible,
+    [data-testid="stNumberInput"] input:active,
+    [data-testid="stNumberInput"] input:invalid {
+        border-color: rgba(34,211,238,0.66) !important;
+        box-shadow: 0 0 0 2px rgba(34,211,238,0.22) !important;
+        outline: none !important;
+    }
     [data-testid="stTextArea"] textarea { min-height: 112px !important; }
 
     [data-baseweb="input"] {
@@ -300,9 +347,42 @@ st.markdown("""
         border: 1px solid rgba(34,211,238,0.25) !important;
         border-radius: 10px !important;
     }
+    [data-baseweb="base-input"] {
+        background: rgba(11,15,26,0.9) !important;
+        border: 1px solid rgba(34,211,238,0.25) !important;
+        border-radius: 10px !important;
+    }
     [data-baseweb="input"]:focus-within {
         border-color: rgba(34,211,238,0.66) !important;
         box-shadow: 0 0 0 2px rgba(34,211,238,0.2) !important;
+    }
+    [data-baseweb="base-input"]:focus-within {
+        border-color: rgba(34,211,238,0.66) !important;
+        box-shadow: 0 0 0 2px rgba(34,211,238,0.2) !important;
+    }
+    [data-testid="stNumberInput"] [data-baseweb="input"]:has(input:invalid),
+    [data-testid="stNumberInput"] [data-baseweb="base-input"]:has(input:invalid) {
+        border-color: rgba(34,211,238,0.66) !important;
+        box-shadow: 0 0 0 2px rgba(34,211,238,0.2) !important;
+    }
+    [data-testid="stNumberInput"] [data-baseweb="input"]:hover,
+    [data-testid="stNumberInput"] [data-baseweb="input"]:focus-within {
+        border-color: rgba(34,211,238,0.66) !important;
+        box-shadow: 0 0 0 2px rgba(34,211,238,0.2) !important;
+    }
+    [data-testid="stNumberInput"] [data-baseweb="base-input"]:hover,
+    [data-testid="stNumberInput"] [data-baseweb="base-input"]:focus-within {
+        border-color: rgba(34,211,238,0.66) !important;
+        box-shadow: 0 0 0 2px rgba(34,211,238,0.2) !important;
+    }
+    [data-testid="stNumberInput"] button {
+        background: rgba(11,15,26,0.92) !important;
+        color: var(--text) !important;
+        border-left: 1px solid rgba(34,211,238,0.3) !important;
+    }
+    [data-testid="stNumberInput"] button:hover {
+        background: rgba(34,211,238,0.14) !important;
+        color: var(--text) !important;
     }
 
     [data-testid="stButton"] button {
@@ -442,71 +522,113 @@ with tab1:
     st.markdown("### Tu balance y estado")
     # Si no hay wallet, se bloquean acciones que requieren firma de transacción.
     if w3_manager.get_address():
+        # Fila superior: tres métricas clave (wallet, balance y balance de contrato).
         with st.container(border=True):
             st.markdown("#### Balance")
             st.caption("Estado de tu wallet y consulta rápida de contratos.")
-            col_main1, col_main2 = st.columns(2)
-            with col_main1:
-                # Datos básicos de la cuenta actual (lectura desde backend).
-                st.info(f"**Billetera Configurada:**\n`{w3_manager.get_address()}`")
-                st.success(f"**Tus Fondos:** {float(w3_manager.get_balance()):.4f} ETH")
-            with col_main2:
-                # Input para consultar el balance ETH de un contrato concreto.
-                contract_to_check = st.text_input("Dirección del Contrato (Airdrop/Donación)", placeholder="0x...", key="check_balance")
-                if contract_to_check:
-                    try:
-                        # Llamada backend: get_contract_eth_balance() solo lee estado en cadena.
-                        c_balance = w3_manager.get_contract_eth_balance(contract_to_check)
-                        st.metric("Balance del Contrato", f"{float(c_balance):.4f} ETH")
-                    except:
-                        st.error("Dirección no válida")
+            col_metric_1, col_metric_2, col_metric_3 = st.columns(3)
 
-        # --- SECCIÓN DE DONACIONES ---
-        with st.container(border=True):
-            st.markdown("#### Donaciones")
-            st.caption("Introduce contrato y monto. Al confirmar, se firma y envía una transacción en blockchain.")
-            st.markdown("##### Realizar donación al contrato")
-            col_don1, col_don2 = st.columns([2, 1])
-            with col_don1:
-                # Inputs de donación: contrato destino + cantidad en ETH.
+            with col_metric_1:
+                with st.container(border=True):
+                    wallet_addr = w3_manager.get_address()
+                    st.caption("Wallet")
+                    st.metric(" ", f"{wallet_addr[:6]}...{wallet_addr[-4:]}")
+                    st.caption(wallet_addr)
+
+            with col_metric_2:
+                with st.container(border=True):
+                    st.caption("Balance")
+                    st.metric(" ", f"{float(w3_manager.get_balance()):.4f} ETH")
+
+            with col_metric_3:
+                with st.container(border=True):
+                    st.caption("Contract Balance")
+                    contract_to_check = st.text_input("Contrato para consulta", placeholder="0x...", key="check_balance")
+                    if contract_to_check:
+                        try:
+                            # Llamada backend: get_contract_eth_balance() solo lee estado en cadena.
+                            c_balance = w3_manager.get_contract_eth_balance(contract_to_check)
+                            st.metric(" ", f"{float(c_balance):.4f} ETH")
+                        except Exception:
+                            st.metric(" ", "-")
+                            st.error("Dirección no válida")
+                    else:
+                        st.metric(" ", "-")
+
+        # Fila inferior: izquierda donaciones, derecha lista de donantes.
+        col_left, col_right = st.columns(2)
+
+        with col_left:
+            with st.container(border=True, height=500):
+                st.markdown("#### Donaciones")
+                st.caption("Introduce contrato y monto. Al confirmar, se firma y envía una transacción en blockchain.")
+                st.markdown("##### Realizar donación al contrato")
+
+                if "donation_feedback_kind" not in st.session_state:
+                    st.session_state["donation_feedback_kind"] = "caption"
+                    st.session_state["donation_feedback_text"] = "El estado de la donación aparecerá aquí."
+
                 target_contract = st.text_input("Dirección Contrato Destino", placeholder="0x...", key="donate_addr")
                 donation_amount = st.number_input("Cantidad a donar (ETH)", min_value=0.0001, format="%.4f")
-            with col_don2:
-                st.write("")  # Espaciador
+                donation_feedback_kind = st.session_state["donation_feedback_kind"]
+                donation_feedback_text = st.session_state["donation_feedback_text"]
+                if donation_feedback_kind == "success":
+                    st.success(donation_feedback_text)
+                elif donation_feedback_kind == "warning":
+                    st.warning(donation_feedback_text)
+                elif donation_feedback_kind == "error":
+                    st.error(donation_feedback_text)
+                else:
+                    st.caption(donation_feedback_text)
                 # Al pulsar este botón se firma y envía una transacción real de ETH.
-                if st.button("Donar ahora"):
+                donate_clicked = st.button("Donar ahora", use_container_width=True)
+                if donate_clicked:
                     if target_contract:
                         try:
                             with st.spinner("Procesando donación..."):
                                 # Llamada backend: donate_eth() construye, firma y envía la transacción.
                                 tx = w3_manager.donate_eth(target_contract, donation_amount)
-                                st.success(f"¡Donación exitosa! TX: {tx[:10]}...")
-                                st.balloons()
+                            st.session_state["donation_feedback_kind"] = "success"
+                            st.session_state["donation_feedback_text"] = f"¡Donación exitosa! TX: {tx[:10]}..."
+                            st.balloons()
                         except Exception as e:
-                            st.error(f"Error: {e}")
+                            st.session_state["donation_feedback_kind"] = "error"
+                            st.session_state["donation_feedback_text"] = f"Error: {e}"
                     else:
-                        st.warning("Pon la dirección del contrato.")
+                        st.session_state["donation_feedback_kind"] = "warning"
+                        st.session_state["donation_feedback_text"] = "Pon la dirección del contrato."
+                    st.rerun()
 
-        # --- SECCIÓN DE LISTA DE DONANTES ---
-        with st.container(border=True):
-            st.markdown("#### Lista de donantes")
-            st.caption("Esta acción solo consulta datos en cadena y no consume firma de transacción.")
-            st.markdown("##### Libro de donantes")
-            # Input para indicar de qué contrato queremos leer los donantes.
-            donor_contract = st.text_input("Ver donantes del contrato:", placeholder="0x...", key="view_donors")
-            # Este botón solo hace lectura del contrato (no envía transacción).
-            if st.button("Cargar lista"):
-                if donor_contract:
-                    try:
-                        # Llamada backend: get_donors_list() ejecuta una llamada .call().
-                        donors = w3_manager.get_donors_list(donor_contract)
-                        if donors:
-                            for d in donors:
-                                st.code(d)
-                        else:
-                            st.info("Aún no hay donantes registrados en este contrato.")
-                    except Exception as e:
-                        st.error(f"No se pudo cargar la lista: {e}")
+        with col_right:
+            with st.container(border=True, height=500):
+                st.markdown("#### Lista de donantes")
+                st.caption("Esta acción solo consulta datos en cadena y no consume firma de transacción.")
+
+                # Input: dirección del contrato a consultar
+                donor_contract = st.text_input("Contrato a consultar", placeholder="0x...", key="view_donors")
+                st.write("")
+                # Botón de acción destacado a ancho completo
+                # Este botón solo hace lectura del contrato (no envía transacción).
+                load_clicked = st.button("Cargar lista de donantes", use_container_width=True)
+
+                # Área de resultados — ocupa el espacio restante del card
+                st.divider()
+                if load_clicked:
+                    if donor_contract:
+                        try:
+                            # Llamada backend: get_donors_list() ejecuta una llamada .call().
+                            donors = w3_manager.get_donors_list(donor_contract)
+                            if donors:
+                                for d in donors:
+                                    st.code(d)
+                            else:
+                                st.info("Aún no hay donantes registrados en este contrato.")
+                        except Exception as e:
+                            st.error(f"No se pudo cargar la lista: {e}")
+                    else:
+                        st.warning("Introduce la dirección del contrato.")
+                else:
+                    st.caption("Los donantes aparecerán aquí tras cargar la lista.")
     else:
         with st.container(border=True):
             st.markdown("#### Balance")
