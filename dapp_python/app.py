@@ -44,7 +44,7 @@ st.markdown("""
 
     .block-container {
         max-width: 1140px;
-        padding-top: 1.8rem;
+        padding-top: 4.5rem;
         padding-bottom: 2.4rem;
     }
 
@@ -68,7 +68,7 @@ st.markdown("""
         border: 1px solid var(--border);
         background: linear-gradient(180deg, rgba(11, 15, 26, 0.72), rgba(11, 15, 26, 0.56));
         border-radius: 18px;
-        margin: 0.55rem auto 1.75rem auto;
+        margin: 1.5rem auto 2rem auto;
         box-shadow:
             0 24px 48px rgba(2, 8, 23, 0.34),
             0 0 0 1px rgba(34, 211, 238, 0.08),
@@ -433,80 +433,76 @@ tab1, tab2, tab3 = st.tabs(["Dashboard", "Airdrop", "Deploy"])
 
 with tab1:
     # TAB 1: panel de estado, donaciones y lectura de donantes.
-    st.markdown("<div class='section-title'>Resumen de Cuenta</div>", unsafe_allow_html=True)
-    st.markdown("<div class='section-helper'>Consulta tu wallet, revisa contratos y gestiona donaciones desde un único panel.</div>", unsafe_allow_html=True)
-    st.markdown("### Tu balance y estado")
-    # Si no hay wallet, se bloquean acciones que requieren firma de transacción.
+    st.markdown("<div class='section-title'>Fund Me: La Hucha del Proyecto</div>", unsafe_allow_html=True)
+    st.markdown("<div class='section-helper'>Gestiona las donaciones del proyecto y consulta el estado de la hucha en tiempo real.</div>", unsafe_allow_html=True)
+
     if w3_manager.get_address():
-        with st.container(border=True):
-            st.markdown("#### Balance")
-            st.caption("Estado de tu wallet y consulta rápida de contratos.")
-            col_main1, col_main2 = st.columns(2)
-            with col_main1:
-                # Datos básicos de la cuenta actual (lectura desde backend).
-                st.info(f"**Billetera Configurada:**\n`{w3_manager.get_address()}`")
-                st.success(f"**Tus Fondos:** {float(w3_manager.get_balance()):.4f} ETH")
-            with col_main2:
-                # Input para consultar el balance ETH de un contrato concreto.
-                contract_to_check = st.text_input("Dirección del Contrato (Airdrop/Donación)", placeholder="0x...", key="check_balance")
-                if contract_to_check:
+        # --- SECCIÓN SUPERIOR: ESTADO DE LA HUCHA ---
+        col_h1, col_h2 = st.columns([1, 2])
+        
+        with col_h1:
+            with st.container(border=True):
+                st.markdown("#### Mi Billetera")
+                st.write(f"`{w3_manager.get_address()[:10]}...{w3_manager.get_address()[-8:]}`")
+                st.metric("Mi Saldo", f"{float(w3_manager.get_balance()):.4f} ETH")
+
+        with col_h2:
+            with st.container(border=True):
+                st.markdown("#### Estado de la Hucha")
+                hucha_addr = st.text_input("Dirección del Contrato (Airdrop)", placeholder="0x...", key="hucha_addr")
+                if hucha_addr:
                     try:
-                        # Llamada backend: get_contract_eth_balance() solo lee estado en cadena.
-                        c_balance = w3_manager.get_contract_eth_balance(contract_to_check)
-                        st.metric("Balance del Contrato", f"{float(c_balance):.4f} ETH")
+                        hucha_balance = w3_manager.get_contract_eth_balance(hucha_addr)
+                        st.metric("Total Recaudado", f"{float(hucha_balance):.4f} ETH", delta="Blockchain Live")
                     except:
                         st.error("Dirección no válida")
+                else:
+                    st.info("Introduce la dirección del contrato Airdrop para ver la recaudación.")
 
-        # --- SECCIÓN DE DONACIONES ---
-        with st.container(border=True):
-            st.markdown("#### Donaciones")
-            st.caption("Introduce contrato y monto. Al confirmar, se firma y envía una transacción en blockchain.")
-            st.markdown("##### Realizar donación al contrato")
-            col_don1, col_don2 = st.columns([2, 1])
-            with col_don1:
-                # Inputs de donación: contrato destino + cantidad en ETH.
-                target_contract = st.text_input("Dirección Contrato Destino", placeholder="0x...", key="donate_addr")
-                donation_amount = st.number_input("Cantidad a donar (ETH)", min_value=0.0001, format="%.4f")
-            with col_don2:
-                st.write("")  # Espaciador
-                # Al pulsar este botón se firma y envía una transacción real de ETH.
-                if st.button("Donar ahora"):
-                    if target_contract:
+        # --- SECCIÓN CENTRAL: DONAR Y LISTA ---
+        col_d1, col_d2 = st.columns(2)
+
+        with col_d1:
+            with st.container(border=True):
+                st.markdown("#### ❤️ Realizar Donación")
+                st.caption("Tu donación se registrará permanentemente en la blockchain.")
+                amount_to_donate = st.number_input("Cantidad (ETH)", min_value=0.0001, format="%.4f", key="amt_don")
+                
+                if st.button("Enviar Donación", use_container_width=True):
+                    if hucha_addr:
                         try:
-                            with st.spinner("Procesando donación..."):
-                                # Llamada backend: donate_eth() construye, firma y envía la transacción.
-                                tx = w3_manager.donate_eth(target_contract, donation_amount)
-                                st.success(f"¡Donación exitosa! TX: {tx[:10]}...")
+                            with st.spinner("Procesando en la red..."):
+                                tx = w3_manager.donate_eth(hucha_addr, amount_to_donate)
+                                st.success("¡Donación recibida!")
                                 st.balloons()
                         except Exception as e:
                             st.error(f"Error: {e}")
                     else:
-                        st.warning("Pon la dirección del contrato.")
+                        st.warning("Primero indica la dirección de la hucha arriba.")
 
-        # --- SECCIÓN DE LISTA DE DONANTES ---
-        with st.container(border=True):
-            st.markdown("#### Lista de donantes")
-            st.caption("Esta acción solo consulta datos en cadena y no consume firma de transacción.")
-            st.markdown("##### Libro de donantes")
-            # Input para indicar de qué contrato queremos leer los donantes.
-            donor_contract = st.text_input("Ver donantes del contrato:", placeholder="0x...", key="view_donors")
-            # Este botón solo hace lectura del contrato (no envía transacción).
-            if st.button("Cargar lista"):
-                if donor_contract:
+        with col_d2:
+            with st.container(border=True):
+                st.markdown("#### 📜 Muro de Donantes")
+                st.caption("Lista automática de personas que han apoyado el proyecto.")
+                
+                if hucha_addr:
                     try:
-                        # Llamada backend: get_donors_list() ejecuta una llamada .call().
-                        donors = w3_manager.get_donors_list(donor_contract)
-                        if donors:
-                            for d in donors:
-                                st.code(d)
+                        donors_data = w3_manager.get_donors_data(hucha_addr)
+                        if donors_data:
+                            # Creamos una lista visualmente atractiva
+                            for donor in donors_data:
+                                with st.expander(f"👤 {donor['address'][:10]}..."):
+                                    st.write("**Dirección completa:**")
+                                    st.code(donor['address'])
+                                    st.write(f"**Total donado:** {donor['amount']:.4f} ETH")
                         else:
-                            st.info("Aún no hay donantes registrados en este contrato.")
-                    except Exception as e:
-                        st.error(f"No se pudo cargar la lista: {e}")
+                            st.write("Aún no hay donantes. ¡Sé el primero!")
+                    except:
+                        st.write("Esperando conexión...")
+                else:
+                    st.write("Configura la dirección arriba para ver el muro.")
     else:
-        with st.container(border=True):
-            st.markdown("#### Balance")
-            st.error("Conecta tu billetera en el menú lateral para ver tu balance y opciones.")
+        st.error("Conecta tu billetera en el menú lateral para acceder al Fund Me.")
 
 with tab2:
     # TAB 2: flujo de airdrop en dos pasos: aprobar y luego enviar.
@@ -557,7 +553,8 @@ with tab2:
                     # Llamada backend: send_airdrop() firma y envía la transacción del contrato.
                     tx = w3_manager.send_airdrop(airdrop_contract, token_address, rcp_list, amt_list)
                     st.success(f"Airdrop ejecutado con éxito")
-                    st.code(f"TX Hash: {tx}")
+                    st.write("**TX Hash:**")
+                    st.code(tx)
                     st.balloons()
             except Exception as e:
                 st.error(f"Error: {e}")
@@ -575,23 +572,33 @@ with tab3:
         # Botón de despliegue del contrato de token.
         if st.button("Lanzar token"):
             try:
-                with st.spinner("Desplegando Token..."):
+                # Informamos que esto puede tardar un poco en la blockchain
+                with st.spinner("Enviando transacción y esperando confirmación (aprox. 1-2 min)..."):
                     # Llamada backend: deploy_contract('CosaToken') publica el contrato.
                     res = w3_manager.deploy_contract('CosaToken')
-                    st.success(f"Token en: `{res['address']}`")
+                    st.success(f"¡Token desplegado con éxito!")
+                    st.write("**Dirección del Contrato:**")
                     st.code(res['address'])
+                    st.write("**TX Hash:**")
+                    st.code(res['tx_hash'])
+                    st.balloons()
             except Exception as e:
-                st.error(f"Error: {e}")
+                st.error(f"Error en el despliegue: {e}")
+                st.info("Tip: Si se queda mucho tiempo, revisa tu balance o prueba con otra RPC.")
 
     with col2:
         st.markdown("#### 2. Airdrop Contract")
         # Botón de despliegue del contrato de airdrop.
         if st.button("Lanzar airdrop"):
             try:
-                with st.spinner("Desplegando Airdrop..."):
+                with st.spinner("Enviando transacción y esperando confirmación..."):
                     # Llamada backend: deploy_contract('Airdrop') publica el contrato.
                     res = w3_manager.deploy_contract('Airdrop')
-                    st.success(f"Airdrop en: `{res['address']}`")
+                    st.success(f"¡Airdrop desplegado con éxito!")
+                    st.write("**Dirección del Contrato:**")
                     st.code(res['address'])
+                    st.write("**TX Hash:**")
+                    st.code(res['tx_hash'])
+                    st.balloons()
             except Exception as e:
-                st.error(f"Error: {e}")
+                st.error(f"Error en el despliegue: {e}")

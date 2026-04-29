@@ -31,7 +31,9 @@ PASO A: Abrir terminal en la carpeta principal.
 PASO B: Entrar en la subcarpeta 'dapp_python':
         > cd dapp_python
 PASO C: Activar el entorno virtual:
-        > .\venv\Scripts\activate
+      
+        source venv/Scripts/activate
+
 PASO D: Lanzar el servidor visual de Streamlit:
         > streamlit run app.py
 
