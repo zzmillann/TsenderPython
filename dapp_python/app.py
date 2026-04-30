@@ -752,6 +752,40 @@ with tab2:
         # Lista de cantidades (unidades enteras, sin decimales): manual o desde CSV.
         amounts = st.text_area("Amounts (unidades)", placeholder="100, 200", height=100, key="airdrop_amounts")
 
+    # --- Validación en tiempo real de direcciones ---
+    # Streamlit rerenderiza en cada cambio de widget, así que esta validación
+    # se ejecuta automáticamente cada vez que el usuario modifica el text_area.
+    # Web3.is_address() es una función local (no llama al nodo), es instantánea.
+    _hay_invalidas = False
+    if recipients:
+        _rcp_raw = [r.strip() for r in recipients.split(",") if r.strip()]
+        if _rcp_raw:
+            _validas   = [a for a in _rcp_raw if Web3.is_address(a)]
+            _invalidas = [a for a in _rcp_raw if not Web3.is_address(a)]
+            _hay_invalidas = len(_invalidas) > 0
+
+            with st.container(border=True):
+                st.markdown("#### 🔎 Validación de direcciones")
+                st.caption("Se actualiza automáticamente al escribir. No consume gas.")
+                _cv1, _cv2 = st.columns(2)
+                with _cv1:
+                    with st.container(border=True):
+                        st.metric("✅ Válidas", len(_validas))
+                with _cv2:
+                    with st.container(border=True):
+                        st.metric("❌ Inválidas", len(_invalidas))
+
+                if _invalidas:
+                    st.error("Las siguientes direcciones no son válidas. Corrígelas antes de enviar:")
+                    # Mostramos cada inválida en su propia línea para que sea fácil localizarla
+                    for _addr in _invalidas:
+                        st.markdown(
+                            f"<span style='color:#f87171;font-family:monospace;font-size:0.88rem;'>❌ {_addr}</span>",
+                            unsafe_allow_html=True
+                        )
+                else:
+                    st.success(f"Todas las direcciones son válidas ({len(_validas)}). Listo para enviar.")
+
     st.warning("Asegúrate de aprobar el contrato de airdrop antes de enviar.")
 
     # Botón 1: aprueba que el contrato de airdrop pueda mover tokens del usuario.
@@ -771,9 +805,12 @@ with tab2:
                 st.error(f"Error: {e}")
 
     # Botón 2: ejecuta el airdrop en cadena con receptores y montos.
+    # Se bloquea si la validación en tiempo real detectó direcciones inválidas.
     if st.button("2. Enviar airdrop"):
         if not airdrop_contract or not token_address or not recipients or not amounts:
             st.error("Rellena todos los campos.")
+        elif _hay_invalidas:
+            st.error("Corrige las direcciones inválidas marcadas en rojo antes de enviar.")
         else:
             try:
                 # Limpieza simple de texto para convertir inputs en listas utilizables.
