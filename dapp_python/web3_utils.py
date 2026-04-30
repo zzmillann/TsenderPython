@@ -143,6 +143,53 @@ class Web3Manager:
         
         return tx_hex
 
+    def estimate_airdrop_gas(self, airdrop_address, token_address, recipients, amounts):
+        """
+        Estima el coste de gas de un airdrop SIN enviar ninguna transacción.
+        Construye el dict de tx igual que send_airdrop pero en lugar de firmar
+        y mandar, llama a w3.eth.estimate_gas() que simula la ejecución en el nodo.
+        Devuelve un dict con:
+            gas_units      -- unidades de gas que consumirá la operación
+            gas_price_gwei -- precio actual del gas en Gwei (precio de mercado)
+            cost_eth       -- coste total estimado en ETH (gas_units × gas_price)
+        """
+        if not self.account:
+            raise Exception("Configura tu Private Key.")
+
+        abi, _ = self._get_contract_data('Airdrop')
+        airdrop_contract = self.w3.eth.contract(
+            address=Web3.to_checksum_address(airdrop_address), abi=abi
+        )
+
+        # build_transaction genera el dict de la tx pero NO la firma ni la envía.
+        # Con ese dict podemos llamar a estimate_gas para que el nodo simule la ejecución.
+        tx_dict = airdrop_contract.functions.airdropTokens(
+            Web3.to_checksum_address(token_address),
+            [Web3.to_checksum_address(r) for r in recipients],
+            amounts
+        ).build_transaction({
+            'from': self.account.address,
+            'nonce': self.w3.eth.get_transaction_count(self.account.address),
+            'chainId': self.w3.eth.chain_id
+        })
+
+        # estimate_gas() pregunta al nodo cuántas unidades de gas necesita esta tx.
+        # Es una llamada de solo lectura: no gasta gas real ni altera el estado.
+        gas_units = self.w3.eth.estimate_gas(tx_dict)
+
+        # gas_price es el precio actual por unidad de gas en wei.
+        gas_price_wei = self.w3.eth.gas_price
+        gas_price_gwei = float(self.w3.from_wei(gas_price_wei, 'gwei'))
+
+        # Coste total = unidades × precio por unidad, convertido a ETH.
+        cost_eth = float(self.w3.from_wei(gas_units * gas_price_wei, 'ether'))
+
+        return {
+            "gas_units": gas_units,
+            "gas_price_gwei": round(gas_price_gwei, 4),
+            "cost_eth": cost_eth
+        }
+
     def send_airdrop(self, airdrop_address, token_address, recipients, amounts):
         """
         Llama a airdropTokens() en el smart contract Airdrop.

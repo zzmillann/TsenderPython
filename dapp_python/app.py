@@ -788,6 +788,57 @@ with tab2:
 
     st.warning("Asegúrate de aprobar el contrato de airdrop antes de enviar.")
 
+    # --- Estimación de gas ---
+    # estimate_gas() es una llamada de solo lectura al nodo: simula la tx y devuelve
+    # cuántas unidades de gas necesita, sin enviar nada ni gastar dinero real.
+    with st.container(border=True):
+        st.markdown("#### ⛽ Estimar coste de gas")
+        st.caption("Consulta cuánto ETH costará el airdrop antes de firmarlo. No envía ninguna transacción.")
+        if st.button("🔍 Estimar gas", use_container_width=True, key="btn_estimate_gas"):
+            if not airdrop_contract:
+                st.warning("Falta la dirección del **Airdrop Contract** (campo al inicio del tab).")
+            elif not token_address:
+                st.warning("Falta la dirección del **Token Address** (campo al inicio del tab).")
+            elif not recipients:
+                st.warning("Falta la lista de **Recipients**.")
+            elif not amounts:
+                st.warning("Falta la lista de **Amounts**.")
+            elif _hay_invalidas:
+                st.warning("Corrige las direcciones inválidas antes de estimar.")
+            elif not w3_manager.get_address():
+                st.warning("Conecta tu wallet en el menú lateral.")
+            else:
+                try:
+                    _rcp_est = [r.strip() for r in recipients.split(",") if r.strip()]
+                    _amt_est = [int(a.strip()) * 10**18 for a in amounts.split(",") if a.strip()]
+                    with st.spinner("Consultando el nodo..."):
+                        # Llamada backend: estimate_airdrop_gas() no firma ni envía nada.
+                        est = w3_manager.estimate_airdrop_gas(
+                            airdrop_contract, token_address, _rcp_est, _amt_est
+                        )
+                    # Persistimos en session_state para que no desaparezca al rerenderizar
+                    st.session_state["gas_estimate"] = est
+                except Exception as e:
+                    st.session_state["gas_estimate"] = None
+                    st.error(f"No se pudo estimar: {e}")
+
+        # Mostramos el resultado si ya existe en session_state
+        if st.session_state.get("gas_estimate"):
+            est = st.session_state["gas_estimate"]
+            _cg1, _cg2, _cg3 = st.columns(3)
+            with _cg1:
+                with st.container(border=True):
+                    st.metric("Unidades de gas", f"{est['gas_units']:,}")
+                    st.caption("Esfuerzo computacional de la tx")
+            with _cg2:
+                with st.container(border=True):
+                    st.metric("Precio del gas", f"{est['gas_price_gwei']} Gwei")
+                    st.caption("Precio actual de mercado por unidad")
+            with _cg3:
+                with st.container(border=True):
+                    st.metric("Coste total estimado", f"{est['cost_eth']:.8f} ETH")
+                    st.caption("gas_units × gas_price")
+
     # Botón 1: aprueba que el contrato de airdrop pueda mover tokens del usuario.
     if st.button("1. Aprobar airdrop"):
         if not token_address or not airdrop_contract:
