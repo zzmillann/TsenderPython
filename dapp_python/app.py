@@ -823,11 +823,53 @@ with tab2:
                     tx = w3_manager.send_airdrop(airdrop_contract, token_address, rcp_list, amt_list)
                     # Guardamos el airdrop: tipo, hash, wallet firmante, contrato y nº destinatarios
                     save_tx("Airdrop", tx, desde=w3_manager.get_address(), contrato=airdrop_contract, destinatarios=len(rcp_list))
+
+                    # Construimos el resultado como lista de dicts para el CSV de exportación.
+                    # Cada destinatario comparte el mismo tx_hash porque es una sola transacción
+                    # que el contrato procesa internamente en bucle.
+                    st.session_state["ultimo_airdrop"] = [
+                        {"address": addr, "tx_hash": tx, "status": "success"}
+                        for addr in rcp_list
+                    ]
+
                     st.success(f"Airdrop ejecutado con éxito")
                     st.code(f"TX Hash: {tx}")
                     st.balloons()
             except Exception as e:
+                # Si falla, guardamos el resultado con status error para que también
+                # sea exportable (útil para saber qué envíos fallaron)
+                if recipients:
+                    _rcp_err = [r.strip() for r in recipients.split(",") if r.strip()]
+                    st.session_state["ultimo_airdrop"] = [
+                        {"address": addr, "tx_hash": "-", "status": "error"}
+                        for addr in _rcp_err
+                    ]
                 st.error(f"Error: {e}")
+
+    # --- Exportar resultados del último airdrop a CSV ---
+    # st.session_state["ultimo_airdrop"] se rellena al enviar (éxito o error).
+    # Persiste mientras la sesión está abierta, así el usuario puede descargar
+    # el CSV aunque haga scroll o cambie de pestaña.
+    if st.session_state.get("ultimo_airdrop"):
+        with st.container(border=True):
+            st.markdown("#### 📤 Exportar resultado del airdrop")
+            st.caption("CSV con cada dirección, el tx hash y el estado del envío.")
+
+            # Convertimos la lista de dicts a DataFrame y luego a CSV con pandas
+            df_result = pd.DataFrame(st.session_state["ultimo_airdrop"])
+            csv_bytes = df_result.to_csv(index=False).encode("utf-8")
+
+            # Tabla de previsualización antes de descargar
+            st.dataframe(df_result, use_container_width=True, hide_index=True)
+
+            st.download_button(
+                "📥 Descargar CSV de resultados",
+                data=csv_bytes,
+                file_name="resultado_airdrop.csv",
+                mime="text/csv",
+                use_container_width=True,
+                key="download_result_csv"
+            )
 
 with tab3:
     # TAB 3: despliegue de contratos inteligentes desde la misma interfaz.
