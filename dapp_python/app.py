@@ -3,11 +3,16 @@ import time
 import pandas as pd
 from web3 import Web3
 from web3_utils import Web3Manager
+from db import init_db, save_tx, get_history
 import os
 from dotenv import load_dotenv
 
 # Carga variables del archivo .env (si existe) para no escribir secretos en el código.
 load_dotenv()
+
+# Inicializa la base de datos SQLite local (crea la tabla si aún no existe).
+# init_db() es idempotente: si la tabla ya existe, no hace nada.
+init_db()
 
 # Configuración general de la página de Streamlit (título, icono y ancho del layout).
 st.set_page_config(page_title="TSender", page_icon="🚀", layout="wide")
@@ -515,7 +520,7 @@ st.markdown("""
 
 # --- Tabs Navigation ---
 # Tabs: separan funcionalidades para que el estudiante entienda el flujo por módulos.
-tab1, tab2, tab3 = st.tabs(["Dashboard", "Airdrop", "Deploy"])
+tab1, tab2, tab3, tab4 = st.tabs(["Dashboard", "Airdrop", "Deploy", "🗂️ Historial"])
 
 with tab1:
     # TAB 1: panel de estado, donaciones y lectura de donantes.
@@ -590,6 +595,8 @@ with tab1:
                             with st.spinner("Procesando donación..."):
                                 # Llamada backend: donate_eth() construye, firma y envía la transacción.
                                 tx = w3_manager.donate_eth(target_contract, donation_amount)
+                            # Persistimos la donación en SQLite para el historial
+                            save_tx("Donación", tx, desde=w3_manager.get_address(), contrato=target_contract)
                             st.session_state["donation_feedback_kind"] = "success"
                             st.session_state["donation_feedback_text"] = f"¡Donación exitosa! TX: {tx[:10]}..."
                             st.balloons()
@@ -757,6 +764,8 @@ with tab2:
                     # Aprobamos una cantidad muy grande por simplicidad en el TFG
                     # Llamada backend: approve_airdrop() envía transacción al token.
                     tx = w3_manager.approve_airdrop(token_address, airdrop_contract, 10**24)
+                    # Guardamos la aprobación en el historial SQLite
+                    save_tx("Approve", tx, desde=w3_manager.get_address(), contrato=token_address)
                     st.success(f"Aprobación enviada: {tx}")
             except Exception as e:
                 st.error(f"Error: {e}")
@@ -775,6 +784,8 @@ with tab2:
                 with st.spinner("Enviando Airdrop..."):
                     # Llamada backend: send_airdrop() firma y envía la transacción del contrato.
                     tx = w3_manager.send_airdrop(airdrop_contract, token_address, rcp_list, amt_list)
+                    # Guardamos el airdrop: tipo, hash, wallet firmante, contrato y nº destinatarios
+                    save_tx("Airdrop", tx, desde=w3_manager.get_address(), contrato=airdrop_contract, destinatarios=len(rcp_list))
                     st.success(f"Airdrop ejecutado con éxito")
                     st.code(f"TX Hash: {tx}")
                     st.balloons()
@@ -797,6 +808,8 @@ with tab3:
                 with st.spinner("Desplegando Token..."):
                     # Llamada backend: deploy_contract('CosaToken') publica el contrato.
                     res = w3_manager.deploy_contract('CosaToken')
+                    # Guardamos el deploy del token en el historial
+                    save_tx("Deploy Token", res['tx_hash'], desde=w3_manager.get_address(), contrato=res['address'])
                     st.success(f"Token en: `{res['address']}`")
                     st.code(res['address'])
             except Exception as e:
@@ -810,7 +823,90 @@ with tab3:
                 with st.spinner("Desplegando Airdrop..."):
                     # Llamada backend: deploy_contract('Airdrop') publica el contrato.
                     res = w3_manager.deploy_contract('Airdrop')
+                    # Guardamos el deploy del contrato airdrop en el historial
+                    save_tx("Deploy Airdrop", res['tx_hash'], desde=w3_manager.get_address(), contrato=res['address'])
                     st.success(f"Airdrop en: `{res['address']}`")
                     st.code(res['address'])
             except Exception as e:
                 st.error(f"Error: {e}")
+
+with tab4:
+    # TAB 4: historial de transacciones persistidas en SQLite.
+    # get_history() consulta la BD local y devuelve una lista de dicts que
+    # convertimos a DataFrame de pandas para filtrar, mostrar y exportar.
+    st.markdown("<div class='section-title'>Historial de Transacciones</div>", unsafe_allow_html=True)
+    st.markdown("<div class='section-helper'>Registro local de todas las transacciones enviadas desde esta app. Los datos se guardan en SQLite sin depender de la blockchain.</div>", unsafe_allow_html=True)
+    st.markdown("### Registro de actividad")
+
+    # Leemos todos los registros de la BD SQLite
+    historial = get_history()
+
+    if not historial:
+        with st.container(border=True):
+            st.info("Aún no hay transacciones registradas. Ejecuta un airdrop, deploy o donación para verlas aquí.")
+    else:
+        # Convertimos a DataFrame de pandas para poder filtrar y calcular métricas fácilmente
+        df_hist = pd.DataFrame(historial)
+
+        # --- Métricas resumen ---
+        col_h1, col_h2, col_h3, col_h4 = st.columns(4)
+        with col_h1:
+            with st.container(border=True):
+                st.metric("Total txs", len(df_hist))
+        with col_h2:
+            with st.container(border=True):
+                st.metric("Airdrops", int((df_hist["tipo"] == "Airdrop").sum()))
+        with col_h3:
+            with st.container(border=True):
+                total_dest = df_hist["destinatarios"].dropna().sum()
+                st.metric("Destinatarios totales", int(total_dest))
+        with col_h4:
+            with st.container(border=True):
+                st.metric("Deploys", int(df_hist["tipo"].str.startswith("Deploy").sum()))
+
+        # --- Filtro por tipo de operación ---
+        tipos_disponibles = ["Todos"] + sorted(df_hist["tipo"].unique().tolist())
+        filtro = st.selectbox("Filtrar por tipo", tipos_disponibles, key="hist_filter")
+        if filtro != "Todos":
+            df_hist = df_hist[df_hist["tipo"] == filtro]
+
+        # --- Tabla principal ---
+        with st.container(border=True):
+            st.markdown("#### Transacciones")
+            df_display = df_hist.copy()
+            # Acortamos el hash para que quepa en la tabla pero mantenemos el completo para el link
+            df_display["tx_hash_corto"] = df_display["tx_hash"].apply(
+                lambda h: f"{h[:10]}...{h[-6:]}" if isinstance(h, str) and len(h) > 16 else h
+            )
+            df_display["etherscan"] = df_display["tx_hash"].apply(
+                lambda h: f"https://sepolia.etherscan.io/tx/{h}" if isinstance(h, str) else ""
+            )
+            columnas = ["fecha", "tipo", "estado", "destinatarios", "tx_hash_corto", "etherscan", "desde", "contrato"]
+            columnas_presentes = [c for c in columnas if c in df_display.columns]
+            st.dataframe(
+                df_display[columnas_presentes],
+                use_container_width=True,
+                hide_index=True,
+                column_config={
+                    "etherscan": st.column_config.LinkColumn("🔗 Etherscan", display_text="Ver tx"),
+                    "tx_hash_corto": st.column_config.TextColumn("TX Hash"),
+                    "fecha": st.column_config.TextColumn("Fecha"),
+                    "tipo": st.column_config.TextColumn("Tipo"),
+                    "estado": st.column_config.TextColumn("Estado"),
+                    "destinatarios": st.column_config.NumberColumn("Destinatarios"),
+                    "desde": st.column_config.TextColumn("Wallet"),
+                    "contrato": st.column_config.TextColumn("Contrato"),
+                }
+            )
+
+        # --- Exportar historial como CSV ---
+        # to_csv() de pandas convierte el DataFrame a texto CSV para descargarlo
+        csv_export = df_hist.drop(columns=["id"], errors="ignore").to_csv(index=False).encode("utf-8")
+        st.download_button(
+            "📥 Exportar historial CSV",
+            data=csv_export,
+            file_name="historial_txs.csv",
+            mime="text/csv",
+            use_container_width=True,
+            key="export_hist_csv"
+        )
