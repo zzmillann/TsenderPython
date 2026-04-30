@@ -1,5 +1,7 @@
 import streamlit as st
 import time
+import pandas as pd
+from web3 import Web3
 from web3_utils import Web3Manager
 import os
 from dotenv import load_dotenv
@@ -644,13 +646,104 @@ with tab2:
     airdrop_contract = st.text_input("Airdrop Contract Address", placeholder="0x... (Despliégalo en la pestaña 3)")
     token_address = st.text_input("Token Address", placeholder="0x...")
 
+    # --- Importar destinatarios desde CSV ---
+    # pandas lee el archivo, validamos con Web3.is_address() y mostramos una tabla
+    # con coloreado de filas inválidas antes de cargar en el formulario.
+    with st.container(border=True):
+        st.markdown("#### 📂 Importar destinatarios desde CSV")
+        st.caption("Sube un CSV con columnas `address` y `amount` para cargar miles de destinatarios de golpe.")
+
+        col_csv_info, col_csv_dl = st.columns([3, 1])
+        with col_csv_dl:
+            # CSV de ejemplo descargable para que el usuario vea el formato exacto
+            sample_csv = "address,amount\n0xAb5801a7D398351b8bE11C439e05C5B3259aeC9B,100\n0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c,200"
+            st.download_button(
+                "📥 Descargar CSV ejemplo",
+                data=sample_csv,
+                file_name="ejemplo_airdrop.csv",
+                mime="text/csv",
+                use_container_width=True,
+                key="download_sample_csv"
+            )
+
+        uploaded_csv = st.file_uploader(
+            "Seleccionar CSV",
+            type=["csv"],
+            key="csv_upload",
+            help="Formato: columnas 'address' y 'amount'. La columna amount son unidades enteras (sin decimales)."
+        )
+
+        if uploaded_csv is not None:
+            try:
+                # pandas lee el CSV y normalizamos los nombres de columna
+                df = pd.read_csv(uploaded_csv)
+                df.columns = df.columns.str.strip().str.lower()
+
+                # Comprobamos que existan las columnas obligatorias
+                if "address" not in df.columns or "amount" not in df.columns:
+                    st.error("❌ El CSV debe tener las columnas **address** y **amount**.")
+                else:
+                    # Limpieza de datos con pandas: quitamos NaN y normalizamos tipos
+                    df = df[["address", "amount"]].dropna().reset_index(drop=True)
+                    df["address"] = df["address"].str.strip()
+                    df["amount"] = pd.to_numeric(df["amount"], errors="coerce")
+                    df = df.dropna(subset=["amount"]).reset_index(drop=True)
+
+                    # Validamos cada dirección Ethereum con web3 (sin gastar gas, es local)
+                    df["válida"] = df["address"].apply(Web3.is_address)
+                    df["estado"] = df["válida"].map({True: "✅ Válida", False: "❌ Inválida"})
+
+                    # Métricas de calidad del CSV
+                    total = len(df)
+                    valid_count = int(df["válida"].sum())
+                    invalid_count = total - valid_count
+
+                    col_m1, col_m2, col_m3 = st.columns(3)
+                    col_m1.metric("Total filas", total)
+                    col_m2.metric("✅ Válidas", valid_count)
+                    col_m3.metric("❌ Inválidas", invalid_count)
+
+                    if invalid_count > 0:
+                        st.warning(f"⚠️ {invalid_count} dirección(es) inválida(s) — se excluirán al cargar en el formulario.")
+
+                    # Tabla de previsualización con filas inválidas resaltadas en rojo
+                    display_df = df[["address", "amount", "estado"]]
+                    valid_series = df["válida"]
+
+                    def highlight_invalid(row):
+                        """Colorea en rojo las filas con dirección Ethereum no válida."""
+                        if not valid_series.loc[row.name]:
+                            return ["background-color: rgba(239,68,68,0.18)"] * len(row)
+                        return [""] * len(row)
+
+                    st.dataframe(
+                        display_df.style.apply(highlight_invalid, axis=1),
+                        use_container_width=True,
+                        hide_index=True
+                    )
+
+                    # Cargamos solo las filas válidas en el formulario manual (session_state)
+                    if st.button("⬆️ Cargar en formulario", use_container_width=True, key="load_csv_btn"):
+                        valid_df = df[df["válida"]]
+                        # Guardamos en session_state: Streamlit usará estos valores
+                        # como valor inicial de los text_area en el siguiente render
+                        st.session_state["airdrop_recipients"] = ", ".join(valid_df["address"].tolist())
+                        st.session_state["airdrop_amounts"] = ", ".join(
+                            valid_df["amount"].apply(lambda x: str(int(x))).tolist()
+                        )
+                        st.rerun()
+
+            except Exception as e:
+                st.error(f"Error al leer el CSV: {e}")
+
     col_a, col_b = st.columns(2)
     with col_a:
-        # Lista de receptores separada por comas.
-        recipients = st.text_area("Recipients (comas)", placeholder="0x1..., 0x2...", height=100)
+        # Lista de receptores: rellena manualmente o carga desde el CSV de arriba.
+        # La key "airdrop_recipients" permite que el botón CSV pre-rellene este campo.
+        recipients = st.text_area("Recipients (comas)", placeholder="0x1..., 0x2...", height=100, key="airdrop_recipients")
     with col_b:
-        # Lista de cantidades (en unidades humanas) separada por comas.
-        amounts = st.text_area("Amounts (unidades)", placeholder="100, 200", height=100)
+        # Lista de cantidades (unidades enteras, sin decimales): manual o desde CSV.
+        amounts = st.text_area("Amounts (unidades)", placeholder="100, 200", height=100, key="airdrop_amounts")
 
     st.warning("Asegúrate de aprobar el contrato de airdrop antes de enviar.")
 
