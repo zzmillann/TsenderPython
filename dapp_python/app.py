@@ -1,11 +1,18 @@
 import streamlit as st
 import time
+import pandas as pd
+from web3 import Web3
 from web3_utils import Web3Manager
+from db import init_db, save_tx, get_history
 import os
 from dotenv import load_dotenv
 
 # Carga variables del archivo .env (si existe) para no escribir secretos en el código.
 load_dotenv()
+
+# Inicializa la base de datos SQLite local (crea la tabla si aún no existe).
+# init_db() es idempotente: si la tabla ya existe, no hace nada.
+init_db()
 
 # Configuración general de la página de Streamlit (título, icono y ancho del layout).
 st.set_page_config(page_title="TSender", page_icon="🚀", layout="wide")
@@ -513,7 +520,7 @@ st.markdown("""
 
 # --- Tabs Navigation ---
 # Tabs: separan funcionalidades para que el estudiante entienda el flujo por módulos.
-tab1, tab2, tab3 = st.tabs(["Dashboard", "Airdrop", "Deploy"])
+tab1, tab2, tab3, tab4 = st.tabs(["Dashboard", "Airdrop", "Deploy", "🗂️ Historial"])
 
 with tab1:
     # TAB 1: panel de estado, donaciones y lectura de donantes.
@@ -588,6 +595,8 @@ with tab1:
                             with st.spinner("Procesando donación..."):
                                 # Llamada backend: donate_eth() construye, firma y envía la transacción.
                                 tx = w3_manager.donate_eth(target_contract, donation_amount)
+                            # Persistimos la donación en SQLite para el historial
+                            save_tx("Donación", tx, desde=w3_manager.get_address(), contrato=target_contract)
                             st.session_state["donation_feedback_kind"] = "success"
                             st.session_state["donation_feedback_text"] = f"¡Donación exitosa! TX: {tx[:10]}..."
                             st.balloons()
@@ -644,15 +653,191 @@ with tab2:
     airdrop_contract = st.text_input("Airdrop Contract Address", placeholder="0x... (Despliégalo en la pestaña 3)")
     token_address = st.text_input("Token Address", placeholder="0x...")
 
+    # --- Importar destinatarios desde CSV ---
+    # pandas lee el archivo, validamos con Web3.is_address() y mostramos una tabla
+    # con coloreado de filas inválidas antes de cargar en el formulario.
+    with st.container(border=True):
+        st.markdown("#### 📂 Importar destinatarios desde CSV")
+        st.caption("Sube un CSV con columnas `address` y `amount` para cargar miles de destinatarios de golpe.")
+
+        col_csv_info, col_csv_dl = st.columns([3, 1])
+        with col_csv_dl:
+            # CSV de ejemplo descargable para que el usuario vea el formato exacto
+            sample_csv = "address,amount\n0xAb5801a7D398351b8bE11C439e05C5B3259aeC9B,100\n0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c,200"
+            st.download_button(
+                "📥 Descargar CSV ejemplo",
+                data=sample_csv,
+                file_name="ejemplo_airdrop.csv",
+                mime="text/csv",
+                use_container_width=True,
+                key="download_sample_csv"
+            )
+
+        uploaded_csv = st.file_uploader(
+            "Seleccionar CSV",
+            type=["csv"],
+            key="csv_upload",
+            help="Formato: columnas 'address' y 'amount'. La columna amount son unidades enteras (sin decimales)."
+        )
+
+        if uploaded_csv is not None:
+            try:
+                # pandas lee el CSV y normalizamos los nombres de columna
+                df = pd.read_csv(uploaded_csv)
+                df.columns = df.columns.str.strip().str.lower()
+
+                # Comprobamos que existan las columnas obligatorias
+                if "address" not in df.columns or "amount" not in df.columns:
+                    st.error("❌ El CSV debe tener las columnas **address** y **amount**.")
+                else:
+                    # Limpieza de datos con pandas: quitamos NaN y normalizamos tipos
+                    df = df[["address", "amount"]].dropna().reset_index(drop=True)
+                    df["address"] = df["address"].str.strip()
+                    df["amount"] = pd.to_numeric(df["amount"], errors="coerce")
+                    df = df.dropna(subset=["amount"]).reset_index(drop=True)
+
+                    # Validamos cada dirección Ethereum con web3 (sin gastar gas, es local)
+                    df["válida"] = df["address"].apply(Web3.is_address)
+                    df["estado"] = df["válida"].map({True: "✅ Válida", False: "❌ Inválida"})
+
+                    # Métricas de calidad del CSV
+                    total = len(df)
+                    valid_count = int(df["válida"].sum())
+                    invalid_count = total - valid_count
+
+                    col_m1, col_m2, col_m3 = st.columns(3)
+                    col_m1.metric("Total filas", total)
+                    col_m2.metric("✅ Válidas", valid_count)
+                    col_m3.metric("❌ Inválidas", invalid_count)
+
+                    if invalid_count > 0:
+                        st.warning(f"⚠️ {invalid_count} dirección(es) inválida(s) — se excluirán al cargar en el formulario.")
+
+                    # Tabla de previsualización con filas inválidas resaltadas en rojo
+                    display_df = df[["address", "amount", "estado"]]
+                    valid_series = df["válida"]
+
+                    def highlight_invalid(row):
+                        """Colorea en rojo las filas con dirección Ethereum no válida."""
+                        if not valid_series.loc[row.name]:
+                            return ["background-color: rgba(239,68,68,0.18)"] * len(row)
+                        return [""] * len(row)
+
+                    st.dataframe(
+                        display_df.style.apply(highlight_invalid, axis=1),
+                        use_container_width=True,
+                        hide_index=True
+                    )
+
+                    # Cargamos solo las filas válidas en el formulario manual (session_state)
+                    if st.button("⬆️ Cargar en formulario", use_container_width=True, key="load_csv_btn"):
+                        valid_df = df[df["válida"]]
+                        # Guardamos en session_state: Streamlit usará estos valores
+                        # como valor inicial de los text_area en el siguiente render
+                        st.session_state["airdrop_recipients"] = ", ".join(valid_df["address"].tolist())
+                        st.session_state["airdrop_amounts"] = ", ".join(
+                            valid_df["amount"].apply(lambda x: str(int(x))).tolist()
+                        )
+                        st.rerun()
+
+            except Exception as e:
+                st.error(f"Error al leer el CSV: {e}")
+
     col_a, col_b = st.columns(2)
     with col_a:
-        # Lista de receptores separada por comas.
-        recipients = st.text_area("Recipients (comas)", placeholder="0x1..., 0x2...", height=100)
+        # Lista de receptores: rellena manualmente o carga desde el CSV de arriba.
+        # La key "airdrop_recipients" permite que el botón CSV pre-rellene este campo.
+        recipients = st.text_area("Recipients (comas)", placeholder="0x1..., 0x2...", height=100, key="airdrop_recipients")
     with col_b:
-        # Lista de cantidades (en unidades humanas) separada por comas.
-        amounts = st.text_area("Amounts (unidades)", placeholder="100, 200", height=100)
+        # Lista de cantidades (unidades enteras, sin decimales): manual o desde CSV.
+        amounts = st.text_area("Amounts (unidades)", placeholder="100, 200", height=100, key="airdrop_amounts")
+
+    # --- Validación en tiempo real de direcciones ---
+    # Streamlit rerenderiza en cada cambio de widget, así que esta validación
+    # se ejecuta automáticamente cada vez que el usuario modifica el text_area.
+    # Web3.is_address() es una función local (no llama al nodo), es instantánea.
+    _hay_invalidas = False
+    if recipients:
+        _rcp_raw = [r.strip() for r in recipients.split(",") if r.strip()]
+        if _rcp_raw:
+            _validas   = [a for a in _rcp_raw if Web3.is_address(a)]
+            _invalidas = [a for a in _rcp_raw if not Web3.is_address(a)]
+            _hay_invalidas = len(_invalidas) > 0
+
+            with st.container(border=True):
+                st.markdown("#### 🔎 Validación de direcciones")
+                st.caption("Se actualiza automáticamente al escribir. No consume gas.")
+                _cv1, _cv2 = st.columns(2)
+                with _cv1:
+                    with st.container(border=True):
+                        st.metric("✅ Válidas", len(_validas))
+                with _cv2:
+                    with st.container(border=True):
+                        st.metric("❌ Inválidas", len(_invalidas))
+
+                if _invalidas:
+                    st.error("Las siguientes direcciones no son válidas. Corrígelas antes de enviar:")
+                    # Mostramos cada inválida en su propia línea para que sea fácil localizarla
+                    for _addr in _invalidas:
+                        st.markdown(
+                            f"<span style='color:#f87171;font-family:monospace;font-size:0.88rem;'>❌ {_addr}</span>",
+                            unsafe_allow_html=True
+                        )
+                else:
+                    st.success(f"Todas las direcciones son válidas ({len(_validas)}). Listo para enviar.")
 
     st.warning("Asegúrate de aprobar el contrato de airdrop antes de enviar.")
+
+    # --- Estimación de gas ---
+    # estimate_gas() es una llamada de solo lectura al nodo: simula la tx y devuelve
+    # cuántas unidades de gas necesita, sin enviar nada ni gastar dinero real.
+    with st.container(border=True):
+        st.markdown("#### ⛽ Estimar coste de gas")
+        st.caption("Consulta cuánto ETH costará el airdrop antes de firmarlo. No envía ninguna transacción.")
+        if st.button("🔍 Estimar gas", use_container_width=True, key="btn_estimate_gas"):
+            if not airdrop_contract:
+                st.warning("Falta la dirección del **Airdrop Contract** (campo al inicio del tab).")
+            elif not token_address:
+                st.warning("Falta la dirección del **Token Address** (campo al inicio del tab).")
+            elif not recipients:
+                st.warning("Falta la lista de **Recipients**.")
+            elif not amounts:
+                st.warning("Falta la lista de **Amounts**.")
+            elif _hay_invalidas:
+                st.warning("Corrige las direcciones inválidas antes de estimar.")
+            elif not w3_manager.get_address():
+                st.warning("Conecta tu wallet en el menú lateral.")
+            else:
+                try:
+                    _rcp_est = [r.strip() for r in recipients.split(",") if r.strip()]
+                    _amt_est = [int(a.strip()) * 10**18 for a in amounts.split(",") if a.strip()]
+                    with st.spinner("Consultando el nodo..."):
+                        # Llamada backend: estimate_airdrop_gas() no firma ni envía nada.
+                        est = w3_manager.estimate_airdrop_gas(
+                            airdrop_contract, token_address, _rcp_est, _amt_est
+                        )
+                    # Persistimos en session_state para que no desaparezca al rerenderizar
+                    st.session_state["gas_estimate"] = est
+                except Exception as e:
+                    st.session_state["gas_estimate"] = None
+                    st.error(f"No se pudo estimar: {e}")
+
+        # Mostramos el resultado si ya existe en session_state
+        if st.session_state.get("gas_estimate"):
+            est = st.session_state["gas_estimate"]
+            _cg1, _cg2, _cg3 = st.columns(3)
+            with _cg1:
+                with st.container(border=True):
+                    st.metric("Unidades de gas", f"{est['gas_units']:,}")
+                    st.caption("Esfuerzo computacional de la tx")
+            with _cg2:
+                with st.container(border=True):
+                    st.metric("Precio del gas", f"{est['gas_price_gwei']} Gwei")
+                    st.caption("Precio actual de mercado por unidad")
+            with _cg3:
+                with st.container(border=True):
+                    st.metric("Coste total estimado", f"{est['cost_eth']:.8f} ETH")
+                    st.caption("gas_units × gas_price")
 
     # Botón 1: aprueba que el contrato de airdrop pueda mover tokens del usuario.
     if st.button("1. Aprobar airdrop"):
@@ -664,14 +849,19 @@ with tab2:
                     # Aprobamos una cantidad muy grande por simplicidad en el TFG
                     # Llamada backend: approve_airdrop() envía transacción al token.
                     tx = w3_manager.approve_airdrop(token_address, airdrop_contract, 10**24)
+                    # Guardamos la aprobación en el historial SQLite
+                    save_tx("Approve", tx, desde=w3_manager.get_address(), contrato=token_address)
                     st.success(f"Aprobación enviada: {tx}")
             except Exception as e:
                 st.error(f"Error: {e}")
 
     # Botón 2: ejecuta el airdrop en cadena con receptores y montos.
+    # Se bloquea si la validación en tiempo real detectó direcciones inválidas.
     if st.button("2. Enviar airdrop"):
         if not airdrop_contract or not token_address or not recipients or not amounts:
             st.error("Rellena todos los campos.")
+        elif _hay_invalidas:
+            st.error("Corrige las direcciones inválidas marcadas en rojo antes de enviar.")
         else:
             try:
                 # Limpieza simple de texto para convertir inputs en listas utilizables.
@@ -682,11 +872,55 @@ with tab2:
                 with st.spinner("Enviando Airdrop..."):
                     # Llamada backend: send_airdrop() firma y envía la transacción del contrato.
                     tx = w3_manager.send_airdrop(airdrop_contract, token_address, rcp_list, amt_list)
+                    # Guardamos el airdrop: tipo, hash, wallet firmante, contrato y nº destinatarios
+                    save_tx("Airdrop", tx, desde=w3_manager.get_address(), contrato=airdrop_contract, destinatarios=len(rcp_list))
+
+                    # Construimos el resultado como lista de dicts para el CSV de exportación.
+                    # Cada destinatario comparte el mismo tx_hash porque es una sola transacción
+                    # que el contrato procesa internamente en bucle.
+                    st.session_state["ultimo_airdrop"] = [
+                        {"address": addr, "tx_hash": tx, "status": "success"}
+                        for addr in rcp_list
+                    ]
+
                     st.success(f"Airdrop ejecutado con éxito")
                     st.code(f"TX Hash: {tx}")
                     st.balloons()
             except Exception as e:
+                # Si falla, guardamos el resultado con status error para que también
+                # sea exportable (útil para saber qué envíos fallaron)
+                if recipients:
+                    _rcp_err = [r.strip() for r in recipients.split(",") if r.strip()]
+                    st.session_state["ultimo_airdrop"] = [
+                        {"address": addr, "tx_hash": "-", "status": "error"}
+                        for addr in _rcp_err
+                    ]
                 st.error(f"Error: {e}")
+
+    # --- Exportar resultados del último airdrop a CSV ---
+    # st.session_state["ultimo_airdrop"] se rellena al enviar (éxito o error).
+    # Persiste mientras la sesión está abierta, así el usuario puede descargar
+    # el CSV aunque haga scroll o cambie de pestaña.
+    if st.session_state.get("ultimo_airdrop"):
+        with st.container(border=True):
+            st.markdown("#### 📤 Exportar resultado del airdrop")
+            st.caption("CSV con cada dirección, el tx hash y el estado del envío.")
+
+            # Convertimos la lista de dicts a DataFrame y luego a CSV con pandas
+            df_result = pd.DataFrame(st.session_state["ultimo_airdrop"])
+            csv_bytes = df_result.to_csv(index=False).encode("utf-8")
+
+            # Tabla de previsualización antes de descargar
+            st.dataframe(df_result, use_container_width=True, hide_index=True)
+
+            st.download_button(
+                "📥 Descargar CSV de resultados",
+                data=csv_bytes,
+                file_name="resultado_airdrop.csv",
+                mime="text/csv",
+                use_container_width=True,
+                key="download_result_csv"
+            )
 
 with tab3:
     # TAB 3: despliegue de contratos inteligentes desde la misma interfaz.
@@ -704,6 +938,8 @@ with tab3:
                 with st.spinner("Desplegando Token..."):
                     # Llamada backend: deploy_contract('CosaToken') publica el contrato.
                     res = w3_manager.deploy_contract('CosaToken')
+                    # Guardamos el deploy del token en el historial
+                    save_tx("Deploy Token", res['tx_hash'], desde=w3_manager.get_address(), contrato=res['address'])
                     st.success(f"Token en: `{res['address']}`")
                     st.code(res['address'])
             except Exception as e:
@@ -717,7 +953,90 @@ with tab3:
                 with st.spinner("Desplegando Airdrop..."):
                     # Llamada backend: deploy_contract('Airdrop') publica el contrato.
                     res = w3_manager.deploy_contract('Airdrop')
+                    # Guardamos el deploy del contrato airdrop en el historial
+                    save_tx("Deploy Airdrop", res['tx_hash'], desde=w3_manager.get_address(), contrato=res['address'])
                     st.success(f"Airdrop en: `{res['address']}`")
                     st.code(res['address'])
             except Exception as e:
                 st.error(f"Error: {e}")
+
+with tab4:
+    # TAB 4: historial de transacciones persistidas en SQLite.
+    # get_history() consulta la BD local y devuelve una lista de dicts que
+    # convertimos a DataFrame de pandas para filtrar, mostrar y exportar.
+    st.markdown("<div class='section-title'>Historial de Transacciones</div>", unsafe_allow_html=True)
+    st.markdown("<div class='section-helper'>Registro local de todas las transacciones enviadas desde esta app. Los datos se guardan en SQLite sin depender de la blockchain.</div>", unsafe_allow_html=True)
+    st.markdown("### Registro de actividad")
+
+    # Leemos todos los registros de la BD SQLite
+    historial = get_history()
+
+    if not historial:
+        with st.container(border=True):
+            st.info("Aún no hay transacciones registradas. Ejecuta un airdrop, deploy o donación para verlas aquí.")
+    else:
+        # Convertimos a DataFrame de pandas para poder filtrar y calcular métricas fácilmente
+        df_hist = pd.DataFrame(historial)
+
+        # --- Métricas resumen ---
+        col_h1, col_h2, col_h3, col_h4 = st.columns(4)
+        with col_h1:
+            with st.container(border=True):
+                st.metric("Total txs", len(df_hist))
+        with col_h2:
+            with st.container(border=True):
+                st.metric("Airdrops", int((df_hist["tipo"] == "Airdrop").sum()))
+        with col_h3:
+            with st.container(border=True):
+                total_dest = df_hist["destinatarios"].dropna().sum()
+                st.metric("Destinatarios totales", int(total_dest))
+        with col_h4:
+            with st.container(border=True):
+                st.metric("Deploys", int(df_hist["tipo"].str.startswith("Deploy").sum()))
+
+        # --- Filtro por tipo de operación ---
+        tipos_disponibles = ["Todos"] + sorted(df_hist["tipo"].unique().tolist())
+        filtro = st.selectbox("Filtrar por tipo", tipos_disponibles, key="hist_filter")
+        if filtro != "Todos":
+            df_hist = df_hist[df_hist["tipo"] == filtro]
+
+        # --- Tabla principal ---
+        with st.container(border=True):
+            st.markdown("#### Transacciones")
+            df_display = df_hist.copy()
+            # Acortamos el hash para que quepa en la tabla pero mantenemos el completo para el link
+            df_display["tx_hash_corto"] = df_display["tx_hash"].apply(
+                lambda h: f"{h[:10]}...{h[-6:]}" if isinstance(h, str) and len(h) > 16 else h
+            )
+            df_display["etherscan"] = df_display["tx_hash"].apply(
+                lambda h: f"https://sepolia.etherscan.io/tx/{h}" if isinstance(h, str) else ""
+            )
+            columnas = ["fecha", "tipo", "estado", "destinatarios", "tx_hash_corto", "etherscan", "desde", "contrato"]
+            columnas_presentes = [c for c in columnas if c in df_display.columns]
+            st.dataframe(
+                df_display[columnas_presentes],
+                use_container_width=True,
+                hide_index=True,
+                column_config={
+                    "etherscan": st.column_config.LinkColumn("🔗 Etherscan", display_text="Ver tx"),
+                    "tx_hash_corto": st.column_config.TextColumn("TX Hash"),
+                    "fecha": st.column_config.TextColumn("Fecha"),
+                    "tipo": st.column_config.TextColumn("Tipo"),
+                    "estado": st.column_config.TextColumn("Estado"),
+                    "destinatarios": st.column_config.NumberColumn("Destinatarios"),
+                    "desde": st.column_config.TextColumn("Wallet"),
+                    "contrato": st.column_config.TextColumn("Contrato"),
+                }
+            )
+
+        # --- Exportar historial como CSV ---
+        # to_csv() de pandas convierte el DataFrame a texto CSV para descargarlo
+        csv_export = df_hist.drop(columns=["id"], errors="ignore").to_csv(index=False).encode("utf-8")
+        st.download_button(
+            "📥 Exportar historial CSV",
+            data=csv_export,
+            file_name="historial_txs.csv",
+            mime="text/csv",
+            use_container_width=True,
+            key="export_hist_csv"
+        )
