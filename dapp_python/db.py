@@ -1,6 +1,11 @@
 import sqlite3
 import os
 from datetime import datetime
+from logger_config import get_logger
+
+# Logger de este módulo.
+# __name__ vale 'db', así cada línea del log indica qué módulo la generó.
+logger = get_logger(__name__)
 
 # Ruta absoluta a la BD junto al propio módulo, independiente del directorio de trabajo.
 # Así el archivo historial.db siempre se crea en la carpeta dapp_python/.
@@ -27,6 +32,7 @@ def init_db():
             )
         """)
         con.commit()
+    logger.info("Base de datos inicializada correctamente — ruta: %s", DB_PATH)
 
 
 def save_tx(tipo, tx_hash, desde=None, contrato=None, destinatarios=None, estado="éxito"):
@@ -50,6 +56,12 @@ def save_tx(tipo, tx_hash, desde=None, contrato=None, destinatarios=None, estado
             (fecha, tipo, tx_hash, desde, contrato, destinatarios, estado)
         )
         con.commit()
+    # Usamos logging.INFO para confirmar que la tx se guardó bien.
+    logger.info(
+        "TX guardada — tipo: %s | estado: %s | hash: %s | desde: %s | destinatarios: %s",
+        tipo, estado, tx_hash[:12] + "..." if tx_hash and len(tx_hash) > 12 else tx_hash,
+        desde, destinatarios
+    )
 
 
 def get_history():
@@ -63,4 +75,7 @@ def get_history():
         rows = con.execute(
             "SELECT * FROM transacciones ORDER BY id DESC"
         ).fetchall()
+    # logging.DEBUG: mensaje de depuración que solo aparece en el archivo .log,
+    # no en la consola (el StreamHandler está configurado a nivel INFO).
+    logger.debug("Historial consultado — %d registros devueltos", len(rows))
     return [dict(row) for row in rows]
