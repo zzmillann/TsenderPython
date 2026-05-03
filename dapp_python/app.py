@@ -526,7 +526,7 @@ st.markdown("""
 
 # --- Tabs Navigation ---
 # Tabs: separan funcionalidades para que el estudiante entienda el flujo por módulos.
-tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(["Dashboard", "Airdrop", "Deploy", "🗂️ Historial", "📋 Logs", "📊 Estadísticas"])
+tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(["Dashboard", "Airdrop", "Deploy", "Historial", "Logs", "Estadísticas"])
 
 with tab1:
     # TAB 1: panel de estado, donaciones y lectura de donantes.
@@ -665,7 +665,7 @@ with tab2:
     # pandas lee el archivo, validamos con Web3.is_address() y mostramos una tabla
     # con coloreado de filas inválidas antes de cargar en el formulario.
     with st.container(border=True):
-        st.markdown("#### 📂 Importar destinatarios desde CSV")
+        st.markdown("#### Importar destinatarios desde CSV")
         st.caption("Sube un CSV con columnas `address` y `amount` para cargar miles de destinatarios de golpe.")
 
         col_csv_info, col_csv_dl = st.columns([3, 1])
@@ -800,7 +800,7 @@ with tab2:
     # estimate_gas() es una llamada de solo lectura al nodo: simula la tx y devuelve
     # cuántas unidades de gas necesita, sin enviar nada ni gastar dinero real.
     with st.container(border=True):
-        st.markdown("#### ⛽ Estimar coste de gas")
+        st.markdown("#### Estimar coste de gas")
         st.caption("Consulta cuánto ETH costará el airdrop antes de firmarlo. No envía ninguna transacción.")
         if st.button("🔍 Estimar gas", use_container_width=True, key="btn_estimate_gas"):
             if not airdrop_contract:

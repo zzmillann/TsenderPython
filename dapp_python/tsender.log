@@ -58,3 +58,8 @@
 2026-05-03 17:31:40 | INFO     | web3_utils   | Wallet cargada — dirección: 0xa3387109E486822a0b7EB0b5d8bC6c556bC96c36
 2026-05-03 17:31:43 | DEBUG    | db           | Historial consultado — 10 registros devueltos
 2026-05-03 17:31:43 | DEBUG    | db           | Historial consultado — 10 registros devueltos
+2026-05-03 17:43:00 | INFO     | db           | Base de datos inicializada correctamente — ruta: C:\Users\ruizg\Desktop\PYTHON\TsenderPython\dapp_python\historial.db
+2026-05-03 17:43:00 | INFO     | __main__     | Aplicación TSender iniciada
+2026-05-03 17:43:01 | INFO     | web3_utils   | Wallet cargada — dirección: 0xa3387109E486822a0b7EB0b5d8bC6c556bC96c36
+2026-05-03 17:43:01 | DEBUG    | db           | Historial consultado — 10 registros devueltos
+2026-05-03 17:43:01 | DEBUG    | db           | Historial consultado — 10 registros devueltos
