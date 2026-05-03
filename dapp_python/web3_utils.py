@@ -2,6 +2,10 @@ from web3 import Web3
 from web3.exceptions import ContractLogicError
 import os
 import json
+from logger_config import get_logger
+
+# Logger de este módulo: cada mensaje indica que vino de 'web3_utils'.
+logger = get_logger(__name__)
 
 class Web3Manager:
     def __init__(self, rpc_url, private_key):
@@ -19,8 +23,9 @@ class Web3Manager:
         if private_key:
             try:
                 self.account = self.w3.eth.account.from_key(private_key)
+                logger.info("Wallet cargada — dirección: %s", self.account.address)
             except Exception as e:
-                print(f"Error cargando key: {e}")
+                logger.error("Error cargando private key: %s", e)
                 self.account = None
         else:
             self.account = None
@@ -96,16 +101,18 @@ class Web3Manager:
         tx_hash = self.w3.eth.send_raw_transaction(signed_tx.raw_transaction)
         
         tx_hex = self.w3.to_hex(tx_hash)
-        print(f"Transacción enviada: {tx_hex}")
+        logger.info("Deploy enviado — contrato: %s | hash: %s", contract_name, tx_hex)
         
         # Esperamos a que la tx sea incluida en un bloque (máximo 5 min)
         try:
             receipt = self.w3.eth.wait_for_transaction_receipt(tx_hash, timeout=300)
+            logger.info("Deploy confirmado — %s desplegado en: %s", contract_name, receipt.contractAddress)
             return {
                 "address": receipt.contractAddress,
                 "tx_hash": tx_hex
             }
         except Exception as e:
+            logger.error("Timeout esperando deploy de %s: %s", contract_name, tx_hex)
             raise Exception(f"Tiempo de espera agotado o error: {tx_hex}. Revisa en Etherscan.")
 
     def approve_airdrop(self, token_address, airdrop_address, amount):
@@ -136,10 +143,11 @@ class Web3Manager:
         tx_hash = self.w3.eth.send_raw_transaction(signed_tx.raw_transaction)
         
         tx_hex = self.w3.to_hex(tx_hash)
-        print(f"Approve enviado: {tx_hex}")
+        logger.info("Approve enviado — token: %s | spender: %s | hash: %s", token_address, airdrop_address, tx_hex)
         
         # Esperamos confirmación (máximo 5 min)
         self.w3.eth.wait_for_transaction_receipt(tx_hash, timeout=300)
+        logger.info("Approve confirmado — hash: %s", tx_hex)
         
         return tx_hex
 
@@ -220,9 +228,10 @@ class Web3Manager:
         tx_hash = self.w3.eth.send_raw_transaction(signed_tx.raw_transaction)
         
         tx_hex = self.w3.to_hex(tx_hash)
-        print(f"Airdrop enviado: {tx_hex}")
+        logger.info("Airdrop enviado — %d destinatarios | token: %s | hash: %s", len(recipients), token_address, tx_hex)
         
         self.w3.eth.wait_for_transaction_receipt(tx_hash, timeout=300)
+        logger.info("Airdrop confirmado — hash: %s", tx_hex)
         return tx_hex
 
     # --- FUNCIONES PARA EL DASHBOARD ---
@@ -284,9 +293,10 @@ class Web3Manager:
         tx_hash = self.w3.eth.send_raw_transaction(signed_tx.raw_transaction)
         
         tx_hex = self.w3.to_hex(tx_hash)
-        print(f"Donación enviada: {tx_hex}")
+        logger.info("Donación enviada — contrato: %s | cantidad: %s ETH | hash: %s", contract_address, amount_eth, tx_hex)
         
         self.w3.eth.wait_for_transaction_receipt(tx_hash, timeout=300)
+        logger.info("Donación confirmada — hash: %s", tx_hex)
         return tx_hex
 
     # --- NUEVAS FUNCIONES ---

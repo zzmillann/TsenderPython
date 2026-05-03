@@ -6,6 +6,11 @@ from web3_utils import Web3Manager
 from db import init_db, save_tx, get_history
 import os
 from dotenv import load_dotenv
+from logger_config import get_logger, LOG_PATH
+
+# Logger de la capa de interfaz.
+# Usamos 'app' como nombre para distinguirlo de 'db' o 'web3_utils' en el log.
+logger = get_logger(__name__)
 
 # Carga variables del archivo .env (si existe) para no escribir secretos en el código.
 load_dotenv()
@@ -13,6 +18,7 @@ load_dotenv()
 # Inicializa la base de datos SQLite local (crea la tabla si aún no existe).
 # init_db() es idempotente: si la tabla ya existe, no hace nada.
 init_db()
+logger.info("Aplicación TSender iniciada")
 
 # Configuración general de la página de Streamlit (título, icono y ancho del layout).
 st.set_page_config(page_title="TSender", page_icon="🚀", layout="wide")
@@ -520,7 +526,7 @@ st.markdown("""
 
 # --- Tabs Navigation ---
 # Tabs: separan funcionalidades para que el estudiante entienda el flujo por módulos.
-tab1, tab2, tab3, tab4 = st.tabs(["Dashboard", "Airdrop", "Deploy", "🗂️ Historial"])
+tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(["Dashboard", "Airdrop", "Deploy", "Historial", "Logs", "Estadísticas"])
 
 with tab1:
     # TAB 1: panel de estado, donaciones y lectura de donantes.
@@ -601,9 +607,11 @@ with tab1:
                             st.session_state["donation_feedback_text"] = f"¡Donación exitosa! TX: {tx[:10]}..."
                             st.balloons()
                         except Exception as e:
+                            logger.error("Error en donación a %s: %s", target_contract, e)
                             st.session_state["donation_feedback_kind"] = "error"
                             st.session_state["donation_feedback_text"] = f"Error: {e}"
                     else:
+                        logger.warning("Intento de donación sin dirección de contrato")
                         st.session_state["donation_feedback_kind"] = "warning"
                         st.session_state["donation_feedback_text"] = "Pon la dirección del contrato."
                     st.rerun()
@@ -657,7 +665,7 @@ with tab2:
     # pandas lee el archivo, validamos con Web3.is_address() y mostramos una tabla
     # con coloreado de filas inválidas antes de cargar en el formulario.
     with st.container(border=True):
-        st.markdown("#### 📂 Importar destinatarios desde CSV")
+        st.markdown("#### Importar destinatarios desde CSV")
         st.caption("Sube un CSV con columnas `address` y `amount` para cargar miles de destinatarios de golpe.")
 
         col_csv_info, col_csv_dl = st.columns([3, 1])
@@ -792,7 +800,7 @@ with tab2:
     # estimate_gas() es una llamada de solo lectura al nodo: simula la tx y devuelve
     # cuántas unidades de gas necesita, sin enviar nada ni gastar dinero real.
     with st.container(border=True):
-        st.markdown("#### ⛽ Estimar coste de gas")
+        st.markdown("#### Estimar coste de gas")
         st.caption("Consulta cuánto ETH costará el airdrop antes de firmarlo. No envía ninguna transacción.")
         if st.button("🔍 Estimar gas", use_container_width=True, key="btn_estimate_gas"):
             if not airdrop_contract:
@@ -842,6 +850,7 @@ with tab2:
     # Botón 1: aprueba que el contrato de airdrop pueda mover tokens del usuario.
     if st.button("1. Aprobar airdrop"):
         if not token_address or not airdrop_contract:
+            logger.warning("Approve cancelado: faltan token_address o airdrop_contract")
             st.error("Faltan direcciones.")
         else:
             try:
@@ -853,14 +862,17 @@ with tab2:
                     save_tx("Approve", tx, desde=w3_manager.get_address(), contrato=token_address)
                     st.success(f"Aprobación enviada: {tx}")
             except Exception as e:
+                logger.error("Error en Approve — token: %s | error: %s", token_address, e)
                 st.error(f"Error: {e}")
 
     # Botón 2: ejecuta el airdrop en cadena con receptores y montos.
     # Se bloquea si la validación en tiempo real detectó direcciones inválidas.
     if st.button("2. Enviar airdrop"):
         if not airdrop_contract or not token_address or not recipients or not amounts:
+            logger.warning("Airdrop cancelado: campos incompletos")
             st.error("Rellena todos los campos.")
         elif _hay_invalidas:
+            logger.warning("Airdrop cancelado: hay direcciones inválidas en la lista de receptores")
             st.error("Corrige las direcciones inválidas marcadas en rojo antes de enviar.")
         else:
             try:
@@ -868,6 +880,7 @@ with tab2:
                 rcp_list = [r.strip() for r in recipients.split(",") if r.strip()]
                 # Convertimos a unidades con 18 decimales
                 amt_list = [int(a.strip()) * 10**18 for a in amounts.split(",") if a.strip()]
+                logger.info("Iniciando airdrop — %d destinatarios | contrato: %s", len(rcp_list), airdrop_contract)
 
                 with st.spinner("Enviando Airdrop..."):
                     # Llamada backend: send_airdrop() firma y envía la transacción del contrato.
@@ -887,6 +900,7 @@ with tab2:
                     st.code(f"TX Hash: {tx}")
                     st.balloons()
             except Exception as e:
+                logger.error("Error en Airdrop — contrato: %s | error: %s", airdrop_contract, e)
                 # Si falla, guardamos el resultado con status error para que también
                 # sea exportable (útil para saber qué envíos fallaron)
                 if recipients:
@@ -943,6 +957,7 @@ with tab3:
                     st.success(f"Token en: `{res['address']}`")
                     st.code(res['address'])
             except Exception as e:
+                logger.error("Error desplegando CosaToken: %s", e)
                 st.error(f"Error: {e}")
 
     with col2:
@@ -958,6 +973,7 @@ with tab3:
                     st.success(f"Airdrop en: `{res['address']}`")
                     st.code(res['address'])
             except Exception as e:
+                logger.error("Error desplegando Airdrop: %s", e)
                 st.error(f"Error: {e}")
 
 with tab4:
@@ -1040,3 +1056,374 @@ with tab4:
             use_container_width=True,
             key="export_hist_csv"
         )
+
+with tab5:
+    # TAB 5: visor de logs en tiempo real.
+    #
+    # El módulo `logging` escribe cada operación en tsender.log.
+    # Aquí simplemente leemos ese archivo con open() (stdlib de Python, sin librerías extra)
+    # y lo mostramos con st.code() para que se vea con formato monoespacio.
+    #
+    # Niveles de log que verás en el archivo:
+    #   DEBUG    → consultas internas (ej: historial leído de BD)
+    #   INFO     → operaciones completadas con éxito (deploy, airdrop, etc.)
+    #   WARNING  → acciones canceladas por el usuario (campos vacíos, etc.)
+    #   ERROR    → excepciones capturadas (tx fallida, nodo no responde, etc.)
+
+    st.markdown("<div class='section-title'>Logs del sistema</div>", unsafe_allow_html=True)
+    st.markdown(
+        "<div class='section-helper'>Registro de todas las operaciones generadas por el módulo <code>logging</code> de Python. "
+        "Se guarda en <code>tsender.log</code> junto al código fuente.</div>",
+        unsafe_allow_html=True
+    )
+
+    # ── Controles ───────────────────────────────────────────────────────────
+    col_ctrl1, col_ctrl2, col_ctrl3 = st.columns([2, 2, 1])
+
+    with col_ctrl1:
+        # Filtra por nivel de log. El módulo logging usa estos 5 niveles estándar.
+        nivel_filter = st.selectbox(
+            "Filtrar por nivel",
+            ["Todos", "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"],
+            key="log_nivel"
+        )
+
+    with col_ctrl2:
+        # Número de líneas a mostrar (las más recientes, desde el final del archivo).
+        max_lines = st.number_input(
+            "Últimas N líneas", min_value=10, max_value=1000, value=100, step=10,
+            key="log_max_lines",
+            help="El archivo crece hacia abajo; las últimas líneas son las más recientes."
+        )
+
+    with col_ctrl3:
+        st.write("")  # espaciado vertical para alinear el botón
+        st.write("")
+        # Streamlit no actualiza la página automáticamente; este botón fuerza un rerun
+        # para volver a leer el archivo y mostrar los últimos mensajes.
+        if st.button("🔄 Actualizar", use_container_width=True, key="log_refresh"):
+            logger.debug("Visor de logs actualizado manualmente por el usuario")
+            st.rerun()
+
+    # ── Lectura del archivo ──────────────────────────────────────────────────
+    # Comprobamos si el archivo existe. La primera vez que se arranca la app
+    # puede que todavía no se haya generado ningún mensaje.
+    if not os.path.exists(LOG_PATH):
+        with st.container(border=True):
+            st.info(
+                "El archivo `tsender.log` aún no existe. "
+                "Realiza cualquier operación (deploy, airdrop, donación…) para generarlo."
+            )
+    else:
+        # open() con encoding='utf-8' para leer correctamente acentos.
+        # readlines() devuelve una lista donde cada elemento es una línea del archivo.
+        with open(LOG_PATH, 'r', encoding='utf-8') as f:
+            todas_las_lineas = f.readlines()
+
+        # Aplicamos el filtro por nivel: buscamos el texto del nivel en cada línea.
+        # El formato del Formatter es: "YYYY-MM-DD HH:MM:SS | NIVEL    | modulo | mensaje"
+        if nivel_filter != "Todos":
+            lineas_filtradas = [l for l in todas_las_lineas if f"| {nivel_filter}" in l]
+        else:
+            lineas_filtradas = todas_las_lineas
+
+        # Recortamos a las últimas N líneas para no sobrecargar el navegador.
+        # El operador de slicing negativo [-n:] devuelve los últimos n elementos.
+        lineas_visibles = lineas_filtradas[-int(max_lines):]
+
+        # ── Métricas rápidas ─────────────────────────────────────────────────
+        col_m1, col_m2, col_m3, col_m4, col_m5 = st.columns(5)
+        total_lineas = len(todas_las_lineas)
+
+        def _count_level(lines, level):
+            """Cuenta cuántas líneas contienen un nivel de log concreto."""
+            return sum(1 for l in lines if f"| {level}" in l)
+
+        with col_m1:
+            with st.container(border=True):
+                st.metric("Total entradas", total_lineas)
+        with col_m2:
+            with st.container(border=True):
+                st.metric("INFO", _count_level(todas_las_lineas, "INFO"))
+        with col_m3:
+            with st.container(border=True):
+                st.metric("DEBUG", _count_level(todas_las_lineas, "DEBUG"))
+        with col_m4:
+            with st.container(border=True):
+                st.metric("WARNING", _count_level(todas_las_lineas, "WARNING"))
+        with col_m5:
+            with st.container(border=True):
+                st.metric("ERROR", _count_level(todas_las_lineas, "ERROR"))
+
+        # ── Visor ────────────────────────────────────────────────────────────
+        with st.container(border=True):
+            if lineas_visibles:
+                st.caption(
+                    f"Mostrando {len(lineas_visibles)} de {len(lineas_filtradas)} entradas "
+                    f"({'todas' if nivel_filter == 'Todos' else nivel_filter}) — "
+                    f"archivo: `{LOG_PATH}`"
+                )
+                # st.code() renderiza el texto con fuente monoespaciada y resaltado.
+                # language=None desactiva el coloreado de sintaxis para que no confunda.
+                st.code("".join(lineas_visibles), language=None)
+            else:
+                st.info(f"No hay entradas de nivel **{nivel_filter}** en el archivo de log.")
+
+        # ── Descargar log completo ────────────────────────────────────────────
+        with open(LOG_PATH, 'rb') as f_raw:
+            log_bytes = f_raw.read()
+
+        st.download_button(
+            "📥 Descargar tsender.log completo",
+            data=log_bytes,
+            file_name="tsender.log",
+            mime="text/plain",
+            use_container_width=True,
+            key="download_log"
+        )
+
+with tab6:
+    # TAB 6: Dashboard de estadísticas con gráficas usando Plotly.
+    #
+    # Plotly es una librería de visualización interactiva que viene incluida
+    # con Streamlit, no hay que instalar nada extra.
+    #
+    # Flujo de datos:
+    #   SQLite (historial.db) → get_history() → lista de dicts
+    #   → DataFrame de pandas → gráficas Plotly → st.plotly_chart()
+    #
+    # Este tab combina tres conceptos de Python muy valorados en clase:
+    #   1. Consulta a base de datos (sqlite3 a través de db.py)
+    #   2. Transformación de datos con pandas (groupby, value_counts, resample)
+    #   3. Visualización con plotly (bar chart, pie chart, line chart)
+
+    import plotly.graph_objects as go
+    import plotly.express as px
+
+    st.markdown("<div class='section-title'>Estadísticas</div>", unsafe_allow_html=True)
+    st.markdown(
+        "<div class='section-helper'>Visualización interactiva de la actividad on-chain. "
+        "Datos obtenidos de la base de datos local SQLite y procesados con pandas.</div>",
+        unsafe_allow_html=True
+    )
+
+    # Leemos el historial de SQLite — misma fuente que la pestaña Historial.
+    datos = get_history()
+
+    if not datos:
+        with st.container(border=True):
+            st.info("Aún no hay transacciones registradas. Ejecuta un airdrop, deploy o donación para ver las estadísticas.")
+    else:
+        # ── Preparación del DataFrame ────────────────────────────────────────
+        # Convertimos la lista de dicts a DataFrame de pandas.
+        # pd.to_datetime() transforma la columna 'fecha' (string) a tipo datetime,
+        # lo que permite agrupar por día, semana, etc. con dt.date.
+        df = pd.DataFrame(datos)
+        df["fecha_dt"] = pd.to_datetime(df["fecha"])
+        df["dia"] = df["fecha_dt"].dt.date  # solo la fecha, sin la hora
+
+        # ── Fila 1: métricas rápidas ─────────────────────────────────────────
+        col_e1, col_e2, col_e3, col_e4 = st.columns(4)
+
+        total_txs       = len(df)
+        total_exito     = int((df["estado"] == "éxito").sum())
+        total_error     = int((df["estado"] == "error").sum())
+        total_dest      = int(df["destinatarios"].dropna().sum())
+
+        with col_e1:
+            with st.container(border=True):
+                st.metric("Total transacciones", total_txs)
+        with col_e2:
+            with st.container(border=True):
+                st.metric("✅ Éxito", total_exito)
+        with col_e3:
+            with st.container(border=True):
+                st.metric("❌ Error", total_error)
+        with col_e4:
+            with st.container(border=True):
+                st.metric("Wallets alcanzadas", total_dest)
+
+        # ── Fila 2: gráfico de barras + pie chart ────────────────────────────
+        col_g1, col_g2 = st.columns(2)
+
+        with col_g1:
+            with st.container(border=True):
+                st.markdown("#### Transacciones por tipo")
+                st.caption("value_counts() de pandas cuenta cuántas veces aparece cada tipo en la columna.")
+
+                # value_counts() devuelve una Series con el conteo de cada valor único.
+                # reset_index() la convierte en DataFrame para que plotly la pueda leer.
+                conteo_tipo = df["tipo"].value_counts().reset_index()
+                conteo_tipo.columns = ["tipo", "cantidad"]
+
+                # go.Bar: gráfico de barras de Plotly.
+                # x = categorías (tipo de tx), y = valores (cantidad).
+                fig_bar = go.Figure(
+                    go.Bar(
+                        x=conteo_tipo["tipo"],
+                        y=conteo_tipo["cantidad"],
+                        marker=dict(
+                            color=conteo_tipo["cantidad"],
+                            colorscale=[[0, "#0ea5e9"], [1, "#22d3ee"]],
+                            showscale=False,
+                            line=dict(color="rgba(34,211,238,0.4)", width=1)
+                        ),
+                        text=conteo_tipo["cantidad"],
+                        textposition="outside",
+                        textfont=dict(color="#e5e7eb", size=13)
+                    )
+                )
+                fig_bar.update_layout(
+                    paper_bgcolor="rgba(0,0,0,0)",
+                    plot_bgcolor="rgba(11,15,26,0.6)",
+                    font=dict(color="#e5e7eb", family="Manrope"),
+                    xaxis=dict(
+                        gridcolor="rgba(34,211,238,0.08)",
+                        tickfont=dict(color="#9ca3af")
+                    ),
+                    yaxis=dict(
+                        gridcolor="rgba(34,211,238,0.08)",
+                        tickfont=dict(color="#9ca3af")
+                    ),
+                    margin=dict(t=20, b=20, l=10, r=10),
+                    height=300
+                )
+                # st.plotly_chart renderiza la figura Plotly como HTML interactivo.
+                # use_container_width=True hace que se adapte al ancho del panel.
+                st.plotly_chart(fig_bar, use_container_width=True)
+
+        with col_g2:
+            with st.container(border=True):
+                st.markdown("#### Éxito vs Error")
+                st.caption("Proporción de transacciones exitosas frente a fallidas.")
+
+                # Contamos por estado (éxito / error).
+                conteo_estado = df["estado"].value_counts().reset_index()
+                conteo_estado.columns = ["estado", "cantidad"]
+
+                # go.Pie: gráfico de tarta. labels = categorías, values = valores.
+                # hole=0.45 crea un donut chart (hueco central), más moderno visualmente.
+                fig_pie = go.Figure(
+                    go.Pie(
+                        labels=conteo_estado["estado"],
+                        values=conteo_estado["cantidad"],
+                        hole=0.45,
+                        marker=dict(
+                            colors=["#34d399", "#f87171"],
+                            line=dict(color="#0b0f1a", width=2)
+                        ),
+                        textfont=dict(color="#e5e7eb", size=13),
+                        insidetextorientation="radial"
+                    )
+                )
+                fig_pie.update_layout(
+                    paper_bgcolor="rgba(0,0,0,0)",
+                    font=dict(color="#e5e7eb", family="Manrope"),
+                    legend=dict(
+                        font=dict(color="#9ca3af"),
+                        bgcolor="rgba(0,0,0,0)"
+                    ),
+                    margin=dict(t=20, b=20, l=10, r=10),
+                    height=300
+                )
+                st.plotly_chart(fig_pie, use_container_width=True)
+
+        # ── Fila 3: línea temporal de actividad ──────────────────────────────
+        with st.container(border=True):
+            st.markdown("#### Actividad por día")
+            st.caption(
+                "groupby('dia') agrupa todas las filas con la misma fecha y "
+                "size() cuenta cuántas hay. El resultado es una Serie indexada por fecha."
+            )
+
+            # groupby('dia'): agrupa filas por fecha.
+            # size(): cuenta el número de filas de cada grupo (= txs de ese día).
+            # reset_index(): convierte la Serie en DataFrame.
+            # rename(): renombra la columna 0 → 'txs' para que el eje Y tenga nombre.
+            txs_por_dia = (
+                df.groupby("dia")
+                .size()
+                .reset_index()
+                .rename(columns={0: "txs"})
+            )
+
+            # px.line: gráfico de línea de Plotly Express (API de alto nivel).
+            # markers=True añade un punto en cada fecha con dato.
+            fig_line = px.line(
+                txs_por_dia,
+                x="dia",
+                y="txs",
+                markers=True,
+                labels={"dia": "Fecha", "txs": "Transacciones"},
+            )
+            fig_line.update_traces(
+                line=dict(color="#22d3ee", width=2.5),
+                marker=dict(color="#22d3ee", size=8,
+                            line=dict(color="#0b0f1a", width=2))
+            )
+            fig_line.update_layout(
+                paper_bgcolor="rgba(0,0,0,0)",
+                plot_bgcolor="rgba(11,15,26,0.6)",
+                font=dict(color="#e5e7eb", family="Manrope"),
+                xaxis=dict(
+                    gridcolor="rgba(34,211,238,0.08)",
+                    tickfont=dict(color="#9ca3af")
+                ),
+                yaxis=dict(
+                    gridcolor="rgba(34,211,238,0.08)",
+                    tickfont=dict(color="#9ca3af"),
+                    tickformat="d"          # enteros, sin decimales en el eje Y
+                ),
+                margin=dict(t=20, b=20, l=10, r=10),
+                height=280
+            )
+            st.plotly_chart(fig_line, use_container_width=True)
+
+        # ── Fila 4: destinatarios por airdrop ────────────────────────────────
+        # Solo tiene sentido si hay al menos un airdrop con destinatarios registrados.
+        df_airdrops = df[(df["tipo"] == "Airdrop") & (df["destinatarios"].notna())].copy()
+
+        if not df_airdrops.empty:
+            with st.container(border=True):
+                st.markdown("#### Destinatarios por airdrop")
+                st.caption("Cada barra es un airdrop distinto. El eje Y muestra cuántas wallets recibieron tokens.")
+
+                # Formateamos el eje X con fecha + hash corto para identificar cada airdrop.
+                df_airdrops["etiqueta"] = (
+                    df_airdrops["fecha"].str[:10] + " · " +
+                    df_airdrops["tx_hash"].str[:8] + "..."
+                )
+
+                fig_dest = go.Figure(
+                    go.Bar(
+                        x=df_airdrops["etiqueta"],
+                        y=df_airdrops["destinatarios"].astype(int),
+                        marker=dict(
+                            color=df_airdrops["destinatarios"].astype(int),
+                            colorscale=[[0, "#0ea5e9"], [1, "#34d399"]],
+                            showscale=False,
+                            line=dict(color="rgba(34,211,238,0.3)", width=1)
+                        ),
+                        text=df_airdrops["destinatarios"].astype(int),
+                        textposition="outside",
+                        textfont=dict(color="#e5e7eb", size=12)
+                    )
+                )
+                fig_dest.update_layout(
+                    paper_bgcolor="rgba(0,0,0,0)",
+                    plot_bgcolor="rgba(11,15,26,0.6)",
+                    font=dict(color="#e5e7eb", family="Manrope"),
+                    xaxis=dict(
+                        gridcolor="rgba(34,211,238,0.08)",
+                        tickfont=dict(color="#9ca3af"),
+                        tickangle=-30
+                    ),
+                    yaxis=dict(
+                        gridcolor="rgba(34,211,238,0.08)",
+                        tickfont=dict(color="#9ca3af"),
+                        tickformat="d"
+                    ),
+                    margin=dict(t=20, b=60, l=10, r=10),
+                    height=300
+                )
+                st.plotly_chart(fig_dest, use_container_width=True)
