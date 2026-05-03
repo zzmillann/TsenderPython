@@ -180,3 +180,251 @@
 2026-05-03 19:30:14 | INFO     | db           | TX guardada — tipo: Deploy Airdrop | estado: éxito | hash: 0xe5ed9113a3... | desde: 0xa3387109E486822a0b7EB0b5d8bC6c556bC96c36 | destinatarios: None
 2026-05-03 19:30:14 | DEBUG    | db           | Historial consultado — 14 registros devueltos
 2026-05-03 19:30:14 | DEBUG    | db           | Historial consultado — 14 registros devueltos
+2026-05-03 22:14:33 | INFO     | db           | Base de datos inicializada correctamente — ruta: C:\Users\Alejandro\Documents\Blockchain\TSenderPython\dapp_python\historial.db
+2026-05-03 22:14:33 | INFO     | __main__     | Aplicación TSender iniciada
+2026-05-03 22:14:33 | INFO     | web3_utils   | Wallet cargada — dirección: 0x79E864ae19c1b71fFB60f16f53368Cc6D7906224
+2026-05-03 22:14:34 | DEBUG    | db           | Historial consultado — 14 registros devueltos
+2026-05-03 22:14:50 | INFO     | db           | Base de datos inicializada correctamente — ruta: C:\Users\Alejandro\Documents\Blockchain\TSenderPython\dapp_python\historial.db
+2026-05-03 22:14:50 | INFO     | __main__     | Aplicación TSender iniciada
+2026-05-03 22:14:50 | INFO     | web3_utils   | Wallet cargada — dirección: 0x79E864ae19c1b71fFB60f16f53368Cc6D7906224
+2026-05-03 22:14:51 | DEBUG    | db           | Historial consultado — 14 registros devueltos
+2026-05-03 22:15:29 | INFO     | db           | Base de datos inicializada correctamente — ruta: C:\Users\Alejandro\Documents\Blockchain\TSenderPython\dapp_python\historial.db
+2026-05-03 22:15:29 | INFO     | __main__     | Aplicación TSender iniciada
+2026-05-03 22:15:29 | INFO     | web3_utils   | Wallet cargada — dirección: 0xa3387109E486822a0b7EB0b5d8bC6c556bC96c36
+2026-05-03 22:15:29 | DEBUG    | db           | Historial consultado — 14 registros devueltos
+2026-05-03 22:17:37 | INFO     | db           | Base de datos inicializada correctamente — ruta: C:\Users\Alejandro\Documents\Blockchain\TSenderPython\dapp_python\historial.db
+2026-05-03 22:17:37 | INFO     | __main__     | Aplicación TSender iniciada
+2026-05-03 22:17:38 | INFO     | web3_utils   | Wallet cargada — dirección: 0x79E864ae19c1b71fFB60f16f53368Cc6D7906224
+2026-05-03 22:17:38 | DEBUG    | db           | Historial consultado — 14 registros devueltos
+2026-05-03 22:17:38 | DEBUG    | db           | Historial consultado — 14 registros devueltos
+2026-05-03 22:18:00 | INFO     | db           | Base de datos inicializada correctamente — ruta: C:\Users\Alejandro\Documents\Blockchain\TSenderPython\dapp_python\historial.db
+2026-05-03 22:18:00 | INFO     | __main__     | Aplicación TSender iniciada
+2026-05-03 22:18:00 | INFO     | web3_utils   | Wallet cargada — dirección: 0xa3387109E486822a0b7EB0b5d8bC6c556bC96c36
+2026-05-03 22:18:00 | DEBUG    | db           | Historial consultado — 14 registros devueltos
+2026-05-03 22:18:00 | DEBUG    | db           | Historial consultado — 14 registros devueltos
+2026-05-03 22:18:26 | INFO     | db           | Base de datos inicializada correctamente — ruta: C:\Users\Alejandro\Documents\Blockchain\TSenderPython\dapp_python\historial.db
+2026-05-03 22:18:26 | INFO     | __main__     | Aplicación TSender iniciada
+2026-05-03 22:18:26 | INFO     | web3_utils   | Wallet cargada — dirección: 0xa3387109E486822a0b7EB0b5d8bC6c556bC96c36
+2026-05-03 22:18:26 | DEBUG    | db           | Historial consultado — 14 registros devueltos
+2026-05-03 22:18:26 | DEBUG    | db           | Historial consultado — 14 registros devueltos
+2026-05-03 22:18:48 | INFO     | db           | Base de datos inicializada correctamente — ruta: C:\Users\Alejandro\Documents\Blockchain\TSenderPython\dapp_python\historial.db
+2026-05-03 22:18:48 | INFO     | __main__     | Aplicación TSender iniciada
+2026-05-03 22:18:48 | INFO     | web3_utils   | Wallet cargada — dirección: 0xa3387109E486822a0b7EB0b5d8bC6c556bC96c36
+2026-05-03 22:18:49 | DEBUG    | db           | Historial consultado — 14 registros devueltos
+2026-05-03 22:18:49 | DEBUG    | db           | Historial consultado — 14 registros devueltos
+2026-05-03 22:19:18 | INFO     | db           | Base de datos inicializada correctamente — ruta: C:\Users\Alejandro\Documents\Blockchain\TSenderPython\dapp_python\historial.db
+2026-05-03 22:19:18 | INFO     | __main__     | Aplicación TSender iniciada
+2026-05-03 22:19:18 | INFO     | web3_utils   | Wallet cargada — dirección: 0xa3387109E486822a0b7EB0b5d8bC6c556bC96c36
+2026-05-03 22:19:18 | DEBUG    | db           | Historial consultado — 14 registros devueltos
+2026-05-03 22:19:18 | DEBUG    | __main__     | Visor de logs actualizado manualmente por el usuario
+2026-05-03 22:19:18 | INFO     | db           | Base de datos inicializada correctamente — ruta: C:\Users\Alejandro\Documents\Blockchain\TSenderPython\dapp_python\historial.db
+2026-05-03 22:19:18 | INFO     | __main__     | Aplicación TSender iniciada
+2026-05-03 22:19:18 | INFO     | web3_utils   | Wallet cargada — dirección: 0xa3387109E486822a0b7EB0b5d8bC6c556bC96c36
+2026-05-03 22:19:18 | INFO     | db           | Base de datos inicializada correctamente — ruta: C:\Users\Alejandro\Documents\Blockchain\TSenderPython\dapp_python\historial.db
+2026-05-03 22:19:18 | INFO     | __main__     | Aplicación TSender iniciada
+2026-05-03 22:19:18 | INFO     | web3_utils   | Wallet cargada — dirección: 0xa3387109E486822a0b7EB0b5d8bC6c556bC96c36
+2026-05-03 22:19:18 | INFO     | db           | Base de datos inicializada correctamente — ruta: C:\Users\Alejandro\Documents\Blockchain\TSenderPython\dapp_python\historial.db
+2026-05-03 22:19:18 | INFO     | __main__     | Aplicación TSender iniciada
+2026-05-03 22:19:18 | INFO     | web3_utils   | Wallet cargada — dirección: 0xa3387109E486822a0b7EB0b5d8bC6c556bC96c36
+2026-05-03 22:19:19 | INFO     | db           | Base de datos inicializada correctamente — ruta: C:\Users\Alejandro\Documents\Blockchain\TSenderPython\dapp_python\historial.db
+2026-05-03 22:19:19 | INFO     | __main__     | Aplicación TSender iniciada
+2026-05-03 22:19:19 | INFO     | web3_utils   | Wallet cargada — dirección: 0xa3387109E486822a0b7EB0b5d8bC6c556bC96c36
+2026-05-03 22:19:19 | DEBUG    | db           | Historial consultado — 14 registros devueltos
+2026-05-03 22:19:19 | DEBUG    | __main__     | Visor de logs actualizado manualmente por el usuario
+2026-05-03 22:19:19 | INFO     | db           | Base de datos inicializada correctamente — ruta: C:\Users\Alejandro\Documents\Blockchain\TSenderPython\dapp_python\historial.db
+2026-05-03 22:19:19 | INFO     | __main__     | Aplicación TSender iniciada
+2026-05-03 22:19:19 | INFO     | web3_utils   | Wallet cargada — dirección: 0xa3387109E486822a0b7EB0b5d8bC6c556bC96c36
+2026-05-03 22:19:20 | DEBUG    | db           | Historial consultado — 14 registros devueltos
+2026-05-03 22:19:20 | DEBUG    | db           | Historial consultado — 14 registros devueltos
+2026-05-03 22:20:02 | INFO     | db           | Base de datos inicializada correctamente — ruta: C:\Users\Alejandro\Documents\Blockchain\TSenderPython\dapp_python\historial.db
+2026-05-03 22:20:02 | INFO     | __main__     | Aplicación TSender iniciada
+2026-05-03 22:20:02 | INFO     | web3_utils   | Wallet cargada — dirección: 0xa3387109E486822a0b7EB0b5d8bC6c556bC96c36
+2026-05-03 22:20:02 | INFO     | web3_utils   | Deploy enviado — contrato: CosaToken | hash: 0xba56456ec63792e8a8d97da9421299836f940bbe869dce95fc24d35153595e1f
+2026-05-03 22:20:08 | INFO     | web3_utils   | Deploy confirmado — CosaToken desplegado en: 0x4A2E564e3B5Db34f4dF4b9c7FBa144b3eA95A885
+2026-05-03 22:20:08 | INFO     | db           | TX guardada — tipo: Deploy Token | estado: éxito | hash: 0xba56456ec6... | desde: 0xa3387109E486822a0b7EB0b5d8bC6c556bC96c36 | destinatarios: None
+2026-05-03 22:20:08 | DEBUG    | db           | Historial consultado — 15 registros devueltos
+2026-05-03 22:20:08 | DEBUG    | db           | Historial consultado — 15 registros devueltos
+2026-05-03 22:22:46 | INFO     | db           | Base de datos inicializada correctamente — ruta: C:\Users\Alejandro\Documents\Blockchain\TSenderPython\dapp_python\historial.db
+2026-05-03 22:22:46 | INFO     | __main__     | Aplicación TSender iniciada
+2026-05-03 22:22:46 | INFO     | web3_utils   | Wallet cargada — dirección: 0x79E864ae19c1b71fFB60f16f53368Cc6D7906224
+2026-05-03 22:22:47 | DEBUG    | db           | Historial consultado — 15 registros devueltos
+2026-05-03 22:22:47 | DEBUG    | db           | Historial consultado — 15 registros devueltos
+2026-05-03 22:22:53 | INFO     | db           | Base de datos inicializada correctamente — ruta: C:\Users\Alejandro\Documents\Blockchain\TSenderPython\dapp_python\historial.db
+2026-05-03 22:22:53 | INFO     | __main__     | Aplicación TSender iniciada
+2026-05-03 22:22:53 | INFO     | web3_utils   | Wallet cargada — dirección: 0x79E864ae19c1b71fFB60f16f53368Cc6D7906224
+2026-05-03 22:22:54 | INFO     | web3_utils   | Deploy enviado — contrato: CosaToken | hash: 0xb01649f20b56abcdb0bdda6c9575b1aa9885534f3211393300ce05c7bfcd4a23
+2026-05-03 22:22:54 | INFO     | db           | Base de datos inicializada correctamente — ruta: C:\Users\Alejandro\Documents\Blockchain\TSenderPython\dapp_python\historial.db
+2026-05-03 22:22:54 | INFO     | __main__     | Aplicación TSender iniciada
+2026-05-03 22:22:54 | INFO     | web3_utils   | Wallet cargada — dirección: 0x79E864ae19c1b71fFB60f16f53368Cc6D7906224
+2026-05-03 22:22:55 | ERROR    | __main__     | Error desplegando CosaToken: {'code': -32000, 'message': 'already known'}
+2026-05-03 22:22:55 | DEBUG    | db           | Historial consultado — 15 registros devueltos
+2026-05-03 22:22:55 | DEBUG    | db           | Historial consultado — 15 registros devueltos
+2026-05-03 22:22:56 | INFO     | web3_utils   | Deploy confirmado — CosaToken desplegado en: 0x99F7161ea1080bCbf67F41DA4A386726d84dA72E
+2026-05-03 22:22:56 | INFO     | db           | TX guardada — tipo: Deploy Token | estado: éxito | hash: 0xb01649f20b... | desde: 0x79E864ae19c1b71fFB60f16f53368Cc6D7906224 | destinatarios: None
+2026-05-03 22:23:05 | INFO     | db           | Base de datos inicializada correctamente — ruta: C:\Users\Alejandro\Documents\Blockchain\TSenderPython\dapp_python\historial.db
+2026-05-03 22:23:05 | INFO     | __main__     | Aplicación TSender iniciada
+2026-05-03 22:23:06 | INFO     | web3_utils   | Wallet cargada — dirección: 0x79E864ae19c1b71fFB60f16f53368Cc6D7906224
+2026-05-03 22:23:06 | DEBUG    | db           | Historial consultado — 16 registros devueltos
+2026-05-03 22:23:06 | DEBUG    | db           | Historial consultado — 16 registros devueltos
+2026-05-03 22:23:24 | INFO     | db           | Base de datos inicializada correctamente — ruta: C:\Users\Alejandro\Documents\Blockchain\TSenderPython\dapp_python\historial.db
+2026-05-03 22:23:24 | INFO     | __main__     | Aplicación TSender iniciada
+2026-05-03 22:23:24 | INFO     | web3_utils   | Wallet cargada — dirección: 0xa3387109E486822a0b7EB0b5d8bC6c556bC96c36
+2026-05-03 22:23:24 | DEBUG    | db           | Historial consultado — 16 registros devueltos
+2026-05-03 22:23:24 | DEBUG    | db           | Historial consultado — 16 registros devueltos
+2026-05-03 22:23:30 | INFO     | db           | Base de datos inicializada correctamente — ruta: C:\Users\Alejandro\Documents\Blockchain\TSenderPython\dapp_python\historial.db
+2026-05-03 22:23:30 | INFO     | __main__     | Aplicación TSender iniciada
+2026-05-03 22:23:30 | INFO     | web3_utils   | Wallet cargada — dirección: 0xa3387109E486822a0b7EB0b5d8bC6c556bC96c36
+2026-05-03 22:23:30 | INFO     | web3_utils   | Deploy enviado — contrato: CosaToken | hash: 0xe371d8f70d4241260b48785156fff54b59d91acd324f6d33dacbe60e5da42a8d
+2026-05-03 22:23:32 | INFO     | web3_utils   | Deploy confirmado — CosaToken desplegado en: 0x0dc01eaab2e2841c2d88C7b83b5Db1212c112398
+2026-05-03 22:23:32 | INFO     | db           | TX guardada — tipo: Deploy Token | estado: éxito | hash: 0xe371d8f70d... | desde: 0xa3387109E486822a0b7EB0b5d8bC6c556bC96c36 | destinatarios: None
+2026-05-03 22:23:32 | DEBUG    | db           | Historial consultado — 17 registros devueltos
+2026-05-03 22:23:32 | DEBUG    | db           | Historial consultado — 17 registros devueltos
+2026-05-03 22:24:51 | INFO     | db           | Base de datos inicializada correctamente — ruta: C:\Users\Alejandro\Documents\Blockchain\TSenderPython\dapp_python\historial.db
+2026-05-03 22:24:51 | INFO     | __main__     | Aplicación TSender iniciada
+2026-05-03 22:24:51 | INFO     | web3_utils   | Wallet cargada — dirección: 0x79E864ae19c1b71fFB60f16f53368Cc6D7906224
+2026-05-03 22:24:51 | DEBUG    | db           | Historial consultado — 17 registros devueltos
+2026-05-03 22:24:51 | DEBUG    | db           | Historial consultado — 17 registros devueltos
+2026-05-03 22:24:59 | INFO     | db           | Base de datos inicializada correctamente — ruta: C:\Users\Alejandro\Documents\Blockchain\TSenderPython\dapp_python\historial.db
+2026-05-03 22:24:59 | INFO     | __main__     | Aplicación TSender iniciada
+2026-05-03 22:24:59 | INFO     | web3_utils   | Wallet cargada — dirección: 0xa3387109E486822a0b7EB0b5d8bC6c556bC96c36
+2026-05-03 22:25:00 | DEBUG    | db           | Historial consultado — 17 registros devueltos
+2026-05-03 22:25:00 | DEBUG    | db           | Historial consultado — 17 registros devueltos
+2026-05-03 22:25:03 | INFO     | db           | Base de datos inicializada correctamente — ruta: C:\Users\Alejandro\Documents\Blockchain\TSenderPython\dapp_python\historial.db
+2026-05-03 22:25:03 | INFO     | __main__     | Aplicación TSender iniciada
+2026-05-03 22:25:03 | INFO     | web3_utils   | Wallet cargada — dirección: 0xa3387109E486822a0b7EB0b5d8bC6c556bC96c36
+2026-05-03 22:25:03 | INFO     | web3_utils   | Deploy enviado — contrato: CosaToken | hash: 0x14ad88866051b3cd6a8ff79ae5c8d667c9c3cd2d937a06c4ab7a058f3d364e74
+2026-05-03 22:25:08 | INFO     | web3_utils   | Deploy confirmado — CosaToken desplegado en: 0xBfD3b2e23B3B33350947979070D5e4ea05155D3C
+2026-05-03 22:25:08 | INFO     | db           | TX guardada — tipo: Deploy Token | estado: éxito | hash: 0x14ad888660... | desde: 0xa3387109E486822a0b7EB0b5d8bC6c556bC96c36 | destinatarios: None
+2026-05-03 22:25:08 | DEBUG    | db           | Historial consultado — 18 registros devueltos
+2026-05-03 22:25:08 | DEBUG    | db           | Historial consultado — 18 registros devueltos
+2026-05-03 22:26:14 | INFO     | db           | Base de datos inicializada correctamente — ruta: C:\Users\Alejandro\Documents\Blockchain\TSenderPython\dapp_python\historial.db
+2026-05-03 22:26:14 | INFO     | __main__     | Aplicación TSender iniciada
+2026-05-03 22:26:14 | INFO     | web3_utils   | Wallet cargada — dirección: 0xa3387109E486822a0b7EB0b5d8bC6c556bC96c36
+2026-05-03 22:26:15 | INFO     | web3_utils   | Deploy enviado — contrato: Airdrop | hash: 0xec671bb22c3ed454fea305e4a1fa27f7fbd86de93500aa0e915668810c036a52
+2026-05-03 22:26:21 | INFO     | web3_utils   | Deploy confirmado — Airdrop desplegado en: 0xa6570d0B96e5b265c2D46bB5B078c87a993B5017
+2026-05-03 22:26:21 | INFO     | db           | TX guardada — tipo: Deploy Airdrop | estado: éxito | hash: 0xec671bb22c... | desde: 0xa3387109E486822a0b7EB0b5d8bC6c556bC96c36 | destinatarios: None
+2026-05-03 22:26:21 | DEBUG    | db           | Historial consultado — 19 registros devueltos
+2026-05-03 22:26:21 | DEBUG    | db           | Historial consultado — 19 registros devueltos
+2026-05-03 22:26:54 | INFO     | db           | Base de datos inicializada correctamente — ruta: C:\Users\Alejandro\Documents\Blockchain\TSenderPython\dapp_python\historial.db
+2026-05-03 22:26:54 | INFO     | __main__     | Aplicación TSender iniciada
+2026-05-03 22:26:54 | INFO     | web3_utils   | Wallet cargada — dirección: 0xa3387109E486822a0b7EB0b5d8bC6c556bC96c36
+2026-05-03 22:26:55 | DEBUG    | db           | Historial consultado — 19 registros devueltos
+2026-05-03 22:26:55 | DEBUG    | db           | Historial consultado — 19 registros devueltos
+2026-05-03 22:27:07 | INFO     | db           | Base de datos inicializada correctamente — ruta: C:\Users\Alejandro\Documents\Blockchain\TSenderPython\dapp_python\historial.db
+2026-05-03 22:27:07 | INFO     | __main__     | Aplicación TSender iniciada
+2026-05-03 22:27:07 | INFO     | web3_utils   | Wallet cargada — dirección: 0xa3387109E486822a0b7EB0b5d8bC6c556bC96c36
+2026-05-03 22:27:07 | INFO     | db           | Base de datos inicializada correctamente — ruta: C:\Users\Alejandro\Documents\Blockchain\TSenderPython\dapp_python\historial.db
+2026-05-03 22:27:07 | INFO     | __main__     | Aplicación TSender iniciada
+2026-05-03 22:27:07 | INFO     | web3_utils   | Wallet cargada — dirección: 0xa3387109E486822a0b7EB0b5d8bC6c556bC96c36
+2026-05-03 22:27:08 | DEBUG    | db           | Historial consultado — 19 registros devueltos
+2026-05-03 22:27:08 | DEBUG    | db           | Historial consultado — 19 registros devueltos
+2026-05-03 22:27:12 | INFO     | db           | Base de datos inicializada correctamente — ruta: C:\Users\Alejandro\Documents\Blockchain\TSenderPython\dapp_python\historial.db
+2026-05-03 22:27:12 | INFO     | __main__     | Aplicación TSender iniciada
+2026-05-03 22:27:12 | INFO     | web3_utils   | Wallet cargada — dirección: 0xa3387109E486822a0b7EB0b5d8bC6c556bC96c36
+2026-05-03 22:27:12 | INFO     | db           | Base de datos inicializada correctamente — ruta: C:\Users\Alejandro\Documents\Blockchain\TSenderPython\dapp_python\historial.db
+2026-05-03 22:27:12 | INFO     | __main__     | Aplicación TSender iniciada
+2026-05-03 22:27:12 | INFO     | web3_utils   | Wallet cargada — dirección: 0xa3387109E486822a0b7EB0b5d8bC6c556bC96c36
+2026-05-03 22:27:13 | INFO     | web3_utils   | Donación enviada — contrato: 0xa6570d0B96e5b265c2D46bB5B078c87a993B5017 | cantidad: 0.001 ETH | hash: 0x425dff040bea66eb115262074b10b19760bcd40ef6061286cf090836c84a6c23
+2026-05-03 22:27:21 | INFO     | web3_utils   | Donación confirmada — hash: 0x425dff040bea66eb115262074b10b19760bcd40ef6061286cf090836c84a6c23
+2026-05-03 22:27:21 | INFO     | db           | TX guardada — tipo: Donación | estado: éxito | hash: 0x425dff040b... | desde: 0xa3387109E486822a0b7EB0b5d8bC6c556bC96c36 | destinatarios: None
+2026-05-03 22:27:21 | INFO     | db           | Base de datos inicializada correctamente — ruta: C:\Users\Alejandro\Documents\Blockchain\TSenderPython\dapp_python\historial.db
+2026-05-03 22:27:21 | INFO     | __main__     | Aplicación TSender iniciada
+2026-05-03 22:27:21 | INFO     | web3_utils   | Wallet cargada — dirección: 0xa3387109E486822a0b7EB0b5d8bC6c556bC96c36
+2026-05-03 22:27:22 | DEBUG    | db           | Historial consultado — 20 registros devueltos
+2026-05-03 22:27:22 | DEBUG    | db           | Historial consultado — 20 registros devueltos
+2026-05-03 22:27:25 | INFO     | db           | Base de datos inicializada correctamente — ruta: C:\Users\Alejandro\Documents\Blockchain\TSenderPython\dapp_python\historial.db
+2026-05-03 22:27:25 | INFO     | __main__     | Aplicación TSender iniciada
+2026-05-03 22:27:25 | INFO     | web3_utils   | Wallet cargada — dirección: 0xa3387109E486822a0b7EB0b5d8bC6c556bC96c36
+2026-05-03 22:27:26 | DEBUG    | db           | Historial consultado — 20 registros devueltos
+2026-05-03 22:27:26 | DEBUG    | db           | Historial consultado — 20 registros devueltos
+2026-05-03 22:27:31 | INFO     | db           | Base de datos inicializada correctamente — ruta: C:\Users\Alejandro\Documents\Blockchain\TSenderPython\dapp_python\historial.db
+2026-05-03 22:27:31 | INFO     | __main__     | Aplicación TSender iniciada
+2026-05-03 22:27:31 | INFO     | web3_utils   | Wallet cargada — dirección: 0xa3387109E486822a0b7EB0b5d8bC6c556bC96c36
+2026-05-03 22:27:32 | DEBUG    | db           | Historial consultado — 20 registros devueltos
+2026-05-03 22:27:32 | DEBUG    | db           | Historial consultado — 20 registros devueltos
+2026-05-03 22:27:39 | INFO     | db           | Base de datos inicializada correctamente — ruta: C:\Users\Alejandro\Documents\Blockchain\TSenderPython\dapp_python\historial.db
+2026-05-03 22:27:39 | INFO     | __main__     | Aplicación TSender iniciada
+2026-05-03 22:27:39 | INFO     | web3_utils   | Wallet cargada — dirección: 0xa3387109E486822a0b7EB0b5d8bC6c556bC96c36
+2026-05-03 22:27:39 | DEBUG    | db           | Historial consultado — 20 registros devueltos
+2026-05-03 22:27:39 | DEBUG    | db           | Historial consultado — 20 registros devueltos
+2026-05-03 22:28:00 | INFO     | db           | Base de datos inicializada correctamente — ruta: C:\Users\Alejandro\Documents\Blockchain\TSenderPython\dapp_python\historial.db
+2026-05-03 22:28:00 | INFO     | __main__     | Aplicación TSender iniciada
+2026-05-03 22:28:00 | INFO     | web3_utils   | Wallet cargada — dirección: 0xa3387109E486822a0b7EB0b5d8bC6c556bC96c36
+2026-05-03 22:28:00 | DEBUG    | db           | Historial consultado — 20 registros devueltos
+2026-05-03 22:28:00 | DEBUG    | __main__     | Visor de logs actualizado manualmente por el usuario
+2026-05-03 22:28:01 | INFO     | db           | Base de datos inicializada correctamente — ruta: C:\Users\Alejandro\Documents\Blockchain\TSenderPython\dapp_python\historial.db
+2026-05-03 22:28:01 | INFO     | __main__     | Aplicación TSender iniciada
+2026-05-03 22:28:01 | INFO     | web3_utils   | Wallet cargada — dirección: 0xa3387109E486822a0b7EB0b5d8bC6c556bC96c36
+2026-05-03 22:28:01 | DEBUG    | db           | Historial consultado — 20 registros devueltos
+2026-05-03 22:28:01 | DEBUG    | db           | Historial consultado — 20 registros devueltos
+2026-05-03 22:28:49 | INFO     | db           | Base de datos inicializada correctamente — ruta: C:\Users\Alejandro\Documents\Blockchain\TSenderPython\dapp_python\historial.db
+2026-05-03 22:28:49 | INFO     | __main__     | Aplicación TSender iniciada
+2026-05-03 22:28:49 | INFO     | web3_utils   | Wallet cargada — dirección: 0xa3387109E486822a0b7EB0b5d8bC6c556bC96c36
+2026-05-03 22:28:50 | DEBUG    | db           | Historial consultado — 20 registros devueltos
+2026-05-03 22:28:50 | DEBUG    | db           | Historial consultado — 20 registros devueltos
+2026-05-03 22:28:57 | INFO     | db           | Base de datos inicializada correctamente — ruta: C:\Users\Alejandro\Documents\Blockchain\TSenderPython\dapp_python\historial.db
+2026-05-03 22:28:57 | INFO     | __main__     | Aplicación TSender iniciada
+2026-05-03 22:28:57 | INFO     | web3_utils   | Wallet cargada — dirección: 0xa3387109E486822a0b7EB0b5d8bC6c556bC96c36
+2026-05-03 22:28:58 | DEBUG    | db           | Historial consultado — 20 registros devueltos
+2026-05-03 22:28:58 | DEBUG    | db           | Historial consultado — 20 registros devueltos
+2026-05-03 22:30:40 | INFO     | db           | Base de datos inicializada correctamente — ruta: C:\Users\Alejandro\Documents\Blockchain\TSenderPython\dapp_python\historial.db
+2026-05-03 22:30:40 | INFO     | __main__     | Aplicación TSender iniciada
+2026-05-03 22:30:40 | INFO     | web3_utils   | Wallet cargada — dirección: 0xa3387109E486822a0b7EB0b5d8bC6c556bC96c36
+2026-05-03 22:30:41 | DEBUG    | db           | Historial consultado — 20 registros devueltos
+2026-05-03 22:30:41 | DEBUG    | db           | Historial consultado — 20 registros devueltos
+2026-05-03 22:31:08 | INFO     | db           | Base de datos inicializada correctamente — ruta: C:\Users\Alejandro\Documents\Blockchain\TSenderPython\dapp_python\historial.db
+2026-05-03 22:31:08 | INFO     | __main__     | Aplicación TSender iniciada
+2026-05-03 22:31:08 | INFO     | web3_utils   | Wallet cargada — dirección: 0xa3387109E486822a0b7EB0b5d8bC6c556bC96c36
+2026-05-03 22:31:09 | DEBUG    | db           | Historial consultado — 20 registros devueltos
+2026-05-03 22:31:09 | DEBUG    | db           | Historial consultado — 20 registros devueltos
+2026-05-03 22:31:15 | INFO     | db           | Base de datos inicializada correctamente — ruta: C:\Users\Alejandro\Documents\Blockchain\TSenderPython\dapp_python\historial.db
+2026-05-03 22:31:15 | INFO     | __main__     | Aplicación TSender iniciada
+2026-05-03 22:31:15 | INFO     | web3_utils   | Wallet cargada — dirección: 0xa3387109E486822a0b7EB0b5d8bC6c556bC96c36
+2026-05-03 22:31:16 | INFO     | web3_utils   | Approve enviado — token: 0xBfD3b2e23B3B33350947979070D5e4ea05155D3C | spender: 0xa6570d0B96e5b265c2D46bB5B078c87a993B5017 | hash: 0xaa8c9effeda9d2d65b1c4c72b7c5afbb2fc10b2644a8a21ffabd35ef2659028b
+2026-05-03 22:31:20 | INFO     | web3_utils   | Approve confirmado — hash: 0xaa8c9effeda9d2d65b1c4c72b7c5afbb2fc10b2644a8a21ffabd35ef2659028b
+2026-05-03 22:31:20 | INFO     | db           | TX guardada — tipo: Approve | estado: éxito | hash: 0xaa8c9effed... | desde: 0xa3387109E486822a0b7EB0b5d8bC6c556bC96c36 | destinatarios: None
+2026-05-03 22:31:20 | DEBUG    | db           | Historial consultado — 21 registros devueltos
+2026-05-03 22:31:20 | DEBUG    | db           | Historial consultado — 21 registros devueltos
+2026-05-03 22:31:56 | INFO     | db           | Base de datos inicializada correctamente — ruta: C:\Users\Alejandro\Documents\Blockchain\TSenderPython\dapp_python\historial.db
+2026-05-03 22:31:56 | INFO     | __main__     | Aplicación TSender iniciada
+2026-05-03 22:31:56 | INFO     | web3_utils   | Wallet cargada — dirección: 0xa3387109E486822a0b7EB0b5d8bC6c556bC96c36
+2026-05-03 22:31:56 | WARNING  | __main__     | Airdrop cancelado: campos incompletos
+2026-05-03 22:31:56 | DEBUG    | db           | Historial consultado — 21 registros devueltos
+2026-05-03 22:31:56 | DEBUG    | db           | Historial consultado — 21 registros devueltos
+2026-05-03 22:32:12 | INFO     | db           | Base de datos inicializada correctamente — ruta: C:\Users\Alejandro\Documents\Blockchain\TSenderPython\dapp_python\historial.db
+2026-05-03 22:32:12 | INFO     | __main__     | Aplicación TSender iniciada
+2026-05-03 22:32:12 | INFO     | web3_utils   | Wallet cargada — dirección: 0xa3387109E486822a0b7EB0b5d8bC6c556bC96c36
+2026-05-03 22:32:12 | DEBUG    | db           | Historial consultado — 21 registros devueltos
+2026-05-03 22:32:12 | DEBUG    | db           | Historial consultado — 21 registros devueltos
+2026-05-03 22:32:17 | INFO     | db           | Base de datos inicializada correctamente — ruta: C:\Users\Alejandro\Documents\Blockchain\TSenderPython\dapp_python\historial.db
+2026-05-03 22:32:17 | INFO     | __main__     | Aplicación TSender iniciada
+2026-05-03 22:32:17 | INFO     | web3_utils   | Wallet cargada — dirección: 0xa3387109E486822a0b7EB0b5d8bC6c556bC96c36
+2026-05-03 22:32:17 | DEBUG    | db           | Historial consultado — 21 registros devueltos
+2026-05-03 22:32:17 | DEBUG    | db           | Historial consultado — 21 registros devueltos
+2026-05-03 22:32:26 | INFO     | db           | Base de datos inicializada correctamente — ruta: C:\Users\Alejandro\Documents\Blockchain\TSenderPython\dapp_python\historial.db
+2026-05-03 22:32:26 | INFO     | __main__     | Aplicación TSender iniciada
+2026-05-03 22:32:26 | INFO     | web3_utils   | Wallet cargada — dirección: 0xa3387109E486822a0b7EB0b5d8bC6c556bC96c36
+2026-05-03 22:32:26 | DEBUG    | db           | Historial consultado — 21 registros devueltos
+2026-05-03 22:32:26 | DEBUG    | db           | Historial consultado — 21 registros devueltos
+2026-05-03 22:32:44 | INFO     | db           | Base de datos inicializada correctamente — ruta: C:\Users\Alejandro\Documents\Blockchain\TSenderPython\dapp_python\historial.db
+2026-05-03 22:32:44 | INFO     | __main__     | Aplicación TSender iniciada
+2026-05-03 22:32:44 | INFO     | web3_utils   | Wallet cargada — dirección: 0xa3387109E486822a0b7EB0b5d8bC6c556bC96c36
+2026-05-03 22:32:44 | INFO     | db           | Base de datos inicializada correctamente — ruta: C:\Users\Alejandro\Documents\Blockchain\TSenderPython\dapp_python\historial.db
+2026-05-03 22:32:44 | INFO     | __main__     | Aplicación TSender iniciada
+2026-05-03 22:32:44 | INFO     | web3_utils   | Wallet cargada — dirección: 0xa3387109E486822a0b7EB0b5d8bC6c556bC96c36
+2026-05-03 22:32:46 | DEBUG    | db           | Historial consultado — 21 registros devueltos
+2026-05-03 22:32:46 | DEBUG    | db           | Historial consultado — 21 registros devueltos
+2026-05-03 22:32:51 | INFO     | db           | Base de datos inicializada correctamente — ruta: C:\Users\Alejandro\Documents\Blockchain\TSenderPython\dapp_python\historial.db
+2026-05-03 22:32:51 | INFO     | __main__     | Aplicación TSender iniciada
+2026-05-03 22:32:51 | INFO     | web3_utils   | Wallet cargada — dirección: 0xa3387109E486822a0b7EB0b5d8bC6c556bC96c36
+2026-05-03 22:32:51 | INFO     | __main__     | Iniciando airdrop — 3 destinatarios | contrato: 0xa6570d0B96e5b265c2D46bB5B078c87a993B5017
+2026-05-03 22:32:52 | INFO     | web3_utils   | Airdrop enviado — 3 destinatarios | token: 0xBfD3b2e23B3B33350947979070D5e4ea05155D3C | hash: 0xa2fbdf6485423a74070c9013001bf972f4820e22daf19f69669ae616d9f9e541
+2026-05-03 22:32:56 | INFO     | web3_utils   | Airdrop confirmado — hash: 0xa2fbdf6485423a74070c9013001bf972f4820e22daf19f69669ae616d9f9e541
+2026-05-03 22:32:56 | INFO     | db           | TX guardada — tipo: Airdrop | estado: éxito | hash: 0xa2fbdf6485... | desde: 0xa3387109E486822a0b7EB0b5d8bC6c556bC96c36 | destinatarios: 3
+2026-05-03 22:32:56 | DEBUG    | db           | Historial consultado — 22 registros devueltos
+2026-05-03 22:32:56 | DEBUG    | db           | Historial consultado — 22 registros devueltos
+2026-05-03 22:33:33 | INFO     | db           | Base de datos inicializada correctamente — ruta: C:\Users\Alejandro\Documents\Blockchain\TSenderPython\dapp_python\historial.db
+2026-05-03 22:33:33 | INFO     | __main__     | Aplicación TSender iniciada
+2026-05-03 22:33:33 | INFO     | web3_utils   | Wallet cargada — dirección: 0xa3387109E486822a0b7EB0b5d8bC6c556bC96c36
+2026-05-03 22:33:33 | DEBUG    | db           | Historial consultado — 22 registros devueltos
+2026-05-03 22:33:33 | DEBUG    | db           | Historial consultado — 22 registros devueltos

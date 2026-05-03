@@ -874,7 +874,8 @@ with tab2:
                     tx = w3_manager.approve_airdrop(token_address, airdrop_contract, 10**24)
                     # Guardamos la aprobación en el historial SQLite
                     save_tx("Approve", tx, desde=w3_manager.get_address(), contrato=token_address)
-                    st.success(f"Aprobación enviada: {tx}")
+                    st.success(f"¡Aprobación concedida!")
+                    st.link_button("📜 Ver en Etherscan", f"https://sepolia.etherscan.io/tx/{tx}", use_container_width=True)
             except Exception as e:
                 logger.error("Error en Approve — token: %s | error: %s", token_address, e)
                 st.error(f"Error: {e}")
@@ -911,7 +912,8 @@ with tab2:
                     ]
 
                     st.success(f"Airdrop ejecutado con éxito")
-                    st.code(f"TX Hash: {tx}")
+                    st.code(tx, language=None)
+                    st.link_button("📜 Ver en Etherscan", f"https://sepolia.etherscan.io/tx/{tx}", use_container_width=True)
                     st.balloons()
             except Exception as e:
                 logger.error("Error en Airdrop — contrato: %s | error: %s", airdrop_contract, e)
@@ -954,6 +956,13 @@ with tab3:
     # TAB 3: despliegue de contratos inteligentes desde la misma interfaz.
     st.markdown("<div class='section-title'>Deploy de Contratos</div>", unsafe_allow_html=True)
     st.markdown("<div class='section-helper'>Publica contratos directamente desde la interfaz usando tu configuración Web3.</div>", unsafe_allow_html=True)
+    
+    # Inicializamos estado para que los resultados del deploy no desaparezcan al primer clic.
+    if "last_deploy_token" not in st.session_state:
+        st.session_state["last_deploy_token"] = None
+    if "last_deploy_airdrop" not in st.session_state:
+        st.session_state["last_deploy_airdrop"] = None
+
     st.markdown(
         "<div class='section-helper' style='text-align:center;margin-bottom:1.1rem;'>"
         "Elige qué contrato desplegar. Cada acción envía una transacción on-chain y guarda el resultado en el historial local."
@@ -965,7 +974,7 @@ with tab3:
     outer_left, col_token, col_airdrop, outer_right = st.columns([1, 4, 4, 1], gap="large")
 
     with col_token:
-        with st.container(border=True, height=320):
+        with st.container(border=True):
             st.markdown("### 🪙 Cosa Token")
             st.caption("Contrato ERC-20 para emitir y transferir tokens de prueba en la red configurada.")
             st.markdown(
@@ -985,14 +994,27 @@ with tab3:
                             res = w3_manager.deploy_contract('CosaToken')
                             # Guardamos el deploy del token en el historial
                             save_tx("Deploy Token", res['tx_hash'], desde=w3_manager.get_address(), contrato=res['address'])
-                            st.success(f"Token en: `{res['address']}`")
-                            st.code(res['address'])
+                            st.session_state["last_deploy_token"] = res
+                            st.balloons()
                     except Exception as e:
                         logger.error("Error desplegando CosaToken: %s", e)
                         st.error(f"Error: {e}")
 
+            # Mostrar resultado persistente si existe
+            if st.session_state["last_deploy_token"]:
+                res = st.session_state["last_deploy_token"]
+                st.markdown("---")
+                st.markdown("<h3 style='text-align: center; color: #34d399;'>✅ TOKEN DESPLEGADO CON ÉXITO</h3>", unsafe_allow_html=True)
+                st.markdown(f"<div style='background: rgba(52, 211, 153, 0.1); border: 2px solid #34d399; padding: 1rem; border-radius: 10px; text-align: center; margin-bottom: 1rem;'><code style='font-size: 1.5rem; color: #34d399; word-break: break-all;'>{res['address']}</code></div>", unsafe_allow_html=True)
+                st.code(res['address'], language=None)
+                c1, c2 = st.columns(2)
+                with c1:
+                    st.link_button("🔍 Etherscan (Address)", f"https://sepolia.etherscan.io/address/{res['address']}", use_container_width=True)
+                with c2:
+                    st.link_button("📜 Etherscan (TX)", f"https://sepolia.etherscan.io/tx/{res['tx_hash']}", use_container_width=True)
+
     with col_airdrop:
-        with st.container(border=True, height=320):
+        with st.container(border=True):
             st.markdown("### 🌐 Airdrop Contract")
             st.caption("Contrato de distribución masiva para enviar tokens a múltiples destinatarios en una sola transacción.")
             st.markdown(
@@ -1012,11 +1034,24 @@ with tab3:
                             res = w3_manager.deploy_contract('Airdrop')
                             # Guardamos el deploy del contrato airdrop en el historial
                             save_tx("Deploy Airdrop", res['tx_hash'], desde=w3_manager.get_address(), contrato=res['address'])
-                            st.success(f"Airdrop en: `{res['address']}`")
-                            st.code(res['address'])
+                            st.session_state["last_deploy_airdrop"] = res
+                            st.balloons()
                     except Exception as e:
                         logger.error("Error desplegando Airdrop: %s", e)
                         st.error(f"Error: {e}")
+
+            # Mostrar resultado persistente si existe
+            if st.session_state["last_deploy_airdrop"]:
+                res = st.session_state["last_deploy_airdrop"]
+                st.markdown("---")
+                st.markdown("<h3 style='text-align: center; color: #34d399;'>✅ AIRDROP DESPLEGADO CON ÉXITO</h3>", unsafe_allow_html=True)
+                st.markdown(f"<div style='background: rgba(52, 211, 153, 0.1); border: 2px solid #34d399; padding: 1rem; border-radius: 10px; text-align: center; margin-bottom: 1rem;'><code style='font-size: 1.5rem; color: #34d399; word-break: break-all;'>{res['address']}</code></div>", unsafe_allow_html=True)
+                st.code(res['address'], language=None)
+                c1, c2 = st.columns(2)
+                with c1:
+                    st.link_button("🔍 Etherscan (Address)", f"https://sepolia.etherscan.io/address/{res['address']}", use_container_width=True)
+                with c2:
+                    st.link_button("📜 Etherscan (TX)", f"https://sepolia.etherscan.io/tx/{res['tx_hash']}", use_container_width=True)
 
 with tab4:
     # TAB 4: historial de transacciones persistidas en SQLite.
@@ -1227,8 +1262,9 @@ with tab5:
 with tab6:
     # TAB 6: Dashboard de estadísticas con gráficas usando Plotly.
     #
-    # Plotly es una librería de visualización interactiva que viene incluida
-    # con Streamlit, no hay que instalar nada extra.
+    # Plotly es una librería de visualización interactiva.
+    # Nota: Aunque Streamlit la soporta nativamente, la librería 'plotly' debe 
+    # estar instalada en el entorno virtual (pip install plotly).
     #
     # Flujo de datos:
     #   SQLite (historial.db) → get_history() → lista de dicts

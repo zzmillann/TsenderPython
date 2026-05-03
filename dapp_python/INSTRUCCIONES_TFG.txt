@@ -61,30 +61,3 @@ en la dirección: http://localhost:8501
      (Nunca uses una con fondos reales de Ethereum principal,
      usa redes Testnet).
 
-
----------------------------------------------------------
-4. LO QUE TE FALTA PARA TERMINAR EL TFG (FINAL)
----------------------------------------------------------
-Actualmente, la UI y el backend están programados, pero
-"simulan" la transacción final ya que el contrato no está
-conectado. Para terminar tu TFG debes:
-
-1) Terminar tu Smart Contract en Solidity y desplegarlo.
-2) Cuando lo despliegues usando Remix / Hardhat, el programa
-   te dará un montón de código en formato JSON llamado "ABI".
-   (Es como el diccionario para que Python entienda el contrato).
-3) Ve al archivo 'app.py' (en la línea 150 aprox).
-4) Borra los comentarios (#) e introduce tu ABI real y la
-   dirección de tu contrato desplegado:
-
-   ABI_DEL_CONTRATO = [{... pega aquí tu json gigante ...}]
-   DIRECCION_DEL_CONTRATO = "0xTuDireccionDeContrato..."
-   
-   tx_hash = w3_manager.send_airdrop(token_address, rcp_list, amt_list, DIRECCION_DEL_CONTRATO, ABI_DEL_CONTRATO)
-   st.success(f"¡Transacción enviada! Hash: {tx_hash}")
-
-5) ¡Listo! Cuando pulses "Enviar" tu aplicación Python
-   escribirá realmente en la Blockchain.
-
-¡Mucho ánimo con la defensa del proyecto!
-=========================================================
