@@ -847,8 +847,22 @@ with tab2:
                     st.metric("Coste total estimado", f"{est['cost_eth']:.8f} ETH")
                     st.caption("gas_units × gas_price")
 
+    def centered_airdrop_action_buttons() -> tuple[bool, bool]:
+        """Renderiza los dos botones de acción centrados y en horizontal."""
+        _left, _center, _right = st.columns([1, 2, 1])
+        with _center:
+            btn_col_1, btn_col_2 = st.columns(2, gap="medium")
+            with btn_col_1:
+                approve_pressed = st.button("1. Aprobar airdrop", key="btn_approve_airdrop", use_container_width=True)
+            with btn_col_2:
+                send_pressed = st.button("2. Enviar airdrop", key="btn_send_airdrop", use_container_width=True)
+        return approve_pressed, send_pressed
+
+    # Botones de acción: centrados y lado a lado.
+    approve_clicked, send_clicked = centered_airdrop_action_buttons()
+
     # Botón 1: aprueba que el contrato de airdrop pueda mover tokens del usuario.
-    if st.button("1. Aprobar airdrop"):
+    if approve_clicked:
         if not token_address or not airdrop_contract:
             logger.warning("Approve cancelado: faltan token_address o airdrop_contract")
             st.error("Faltan direcciones.")
@@ -867,7 +881,7 @@ with tab2:
 
     # Botón 2: ejecuta el airdrop en cadena con receptores y montos.
     # Se bloquea si la validación en tiempo real detectó direcciones inválidas.
-    if st.button("2. Enviar airdrop"):
+    if send_clicked:
         if not airdrop_contract or not token_address or not recipients or not amounts:
             logger.warning("Airdrop cancelado: campos incompletos")
             st.error("Rellena todos los campos.")
