@@ -526,7 +526,7 @@ st.markdown("""
 
 # --- Tabs Navigation ---
 # Tabs: separan funcionalidades para que el estudiante entienda el flujo por módulos.
-tab1, tab2, tab3, tab4, tab5 = st.tabs(["Dashboard", "Airdrop", "Deploy", "🗂️ Historial", "📋 Logs"])
+tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(["Dashboard", "Airdrop", "Deploy", "🗂️ Historial", "📋 Logs", "📊 Estadísticas"])
 
 with tab1:
     # TAB 1: panel de estado, donaciones y lectura de donantes.
@@ -1181,3 +1181,249 @@ with tab5:
             use_container_width=True,
             key="download_log"
         )
+
+with tab6:
+    # TAB 6: Dashboard de estadísticas con gráficas usando Plotly.
+    #
+    # Plotly es una librería de visualización interactiva que viene incluida
+    # con Streamlit, no hay que instalar nada extra.
+    #
+    # Flujo de datos:
+    #   SQLite (historial.db) → get_history() → lista de dicts
+    #   → DataFrame de pandas → gráficas Plotly → st.plotly_chart()
+    #
+    # Este tab combina tres conceptos de Python muy valorados en clase:
+    #   1. Consulta a base de datos (sqlite3 a través de db.py)
+    #   2. Transformación de datos con pandas (groupby, value_counts, resample)
+    #   3. Visualización con plotly (bar chart, pie chart, line chart)
+
+    import plotly.graph_objects as go
+    import plotly.express as px
+
+    st.markdown("<div class='section-title'>Estadísticas</div>", unsafe_allow_html=True)
+    st.markdown(
+        "<div class='section-helper'>Visualización interactiva de la actividad on-chain. "
+        "Datos obtenidos de la base de datos local SQLite y procesados con pandas.</div>",
+        unsafe_allow_html=True
+    )
+
+    # Leemos el historial de SQLite — misma fuente que la pestaña Historial.
+    datos = get_history()
+
+    if not datos:
+        with st.container(border=True):
+            st.info("Aún no hay transacciones registradas. Ejecuta un airdrop, deploy o donación para ver las estadísticas.")
+    else:
+        # ── Preparación del DataFrame ────────────────────────────────────────
+        # Convertimos la lista de dicts a DataFrame de pandas.
+        # pd.to_datetime() transforma la columna 'fecha' (string) a tipo datetime,
+        # lo que permite agrupar por día, semana, etc. con dt.date.
+        df = pd.DataFrame(datos)
+        df["fecha_dt"] = pd.to_datetime(df["fecha"])
+        df["dia"] = df["fecha_dt"].dt.date  # solo la fecha, sin la hora
+
+        # ── Fila 1: métricas rápidas ─────────────────────────────────────────
+        col_e1, col_e2, col_e3, col_e4 = st.columns(4)
+
+        total_txs       = len(df)
+        total_exito     = int((df["estado"] == "éxito").sum())
+        total_error     = int((df["estado"] == "error").sum())
+        total_dest      = int(df["destinatarios"].dropna().sum())
+
+        with col_e1:
+            with st.container(border=True):
+                st.metric("Total transacciones", total_txs)
+        with col_e2:
+            with st.container(border=True):
+                st.metric("✅ Éxito", total_exito)
+        with col_e3:
+            with st.container(border=True):
+                st.metric("❌ Error", total_error)
+        with col_e4:
+            with st.container(border=True):
+                st.metric("Wallets alcanzadas", total_dest)
+
+        # ── Fila 2: gráfico de barras + pie chart ────────────────────────────
+        col_g1, col_g2 = st.columns(2)
+
+        with col_g1:
+            with st.container(border=True):
+                st.markdown("#### Transacciones por tipo")
+                st.caption("value_counts() de pandas cuenta cuántas veces aparece cada tipo en la columna.")
+
+                # value_counts() devuelve una Series con el conteo de cada valor único.
+                # reset_index() la convierte en DataFrame para que plotly la pueda leer.
+                conteo_tipo = df["tipo"].value_counts().reset_index()
+                conteo_tipo.columns = ["tipo", "cantidad"]
+
+                # go.Bar: gráfico de barras de Plotly.
+                # x = categorías (tipo de tx), y = valores (cantidad).
+                fig_bar = go.Figure(
+                    go.Bar(
+                        x=conteo_tipo["tipo"],
+                        y=conteo_tipo["cantidad"],
+                        marker=dict(
+                            color=conteo_tipo["cantidad"],
+                            colorscale=[[0, "#0ea5e9"], [1, "#22d3ee"]],
+                            showscale=False,
+                            line=dict(color="rgba(34,211,238,0.4)", width=1)
+                        ),
+                        text=conteo_tipo["cantidad"],
+                        textposition="outside",
+                        textfont=dict(color="#e5e7eb", size=13)
+                    )
+                )
+                fig_bar.update_layout(
+                    paper_bgcolor="rgba(0,0,0,0)",
+                    plot_bgcolor="rgba(11,15,26,0.6)",
+                    font=dict(color="#e5e7eb", family="Manrope"),
+                    xaxis=dict(
+                        gridcolor="rgba(34,211,238,0.08)",
+                        tickfont=dict(color="#9ca3af")
+                    ),
+                    yaxis=dict(
+                        gridcolor="rgba(34,211,238,0.08)",
+                        tickfont=dict(color="#9ca3af")
+                    ),
+                    margin=dict(t=20, b=20, l=10, r=10),
+                    height=300
+                )
+                # st.plotly_chart renderiza la figura Plotly como HTML interactivo.
+                # use_container_width=True hace que se adapte al ancho del panel.
+                st.plotly_chart(fig_bar, use_container_width=True)
+
+        with col_g2:
+            with st.container(border=True):
+                st.markdown("#### Éxito vs Error")
+                st.caption("Proporción de transacciones exitosas frente a fallidas.")
+
+                # Contamos por estado (éxito / error).
+                conteo_estado = df["estado"].value_counts().reset_index()
+                conteo_estado.columns = ["estado", "cantidad"]
+
+                # go.Pie: gráfico de tarta. labels = categorías, values = valores.
+                # hole=0.45 crea un donut chart (hueco central), más moderno visualmente.
+                fig_pie = go.Figure(
+                    go.Pie(
+                        labels=conteo_estado["estado"],
+                        values=conteo_estado["cantidad"],
+                        hole=0.45,
+                        marker=dict(
+                            colors=["#34d399", "#f87171"],
+                            line=dict(color="#0b0f1a", width=2)
+                        ),
+                        textfont=dict(color="#e5e7eb", size=13),
+                        insidetextorientation="radial"
+                    )
+                )
+                fig_pie.update_layout(
+                    paper_bgcolor="rgba(0,0,0,0)",
+                    font=dict(color="#e5e7eb", family="Manrope"),
+                    legend=dict(
+                        font=dict(color="#9ca3af"),
+                        bgcolor="rgba(0,0,0,0)"
+                    ),
+                    margin=dict(t=20, b=20, l=10, r=10),
+                    height=300
+                )
+                st.plotly_chart(fig_pie, use_container_width=True)
+
+        # ── Fila 3: línea temporal de actividad ──────────────────────────────
+        with st.container(border=True):
+            st.markdown("#### Actividad por día")
+            st.caption(
+                "groupby('dia') agrupa todas las filas con la misma fecha y "
+                "size() cuenta cuántas hay. El resultado es una Serie indexada por fecha."
+            )
+
+            # groupby('dia'): agrupa filas por fecha.
+            # size(): cuenta el número de filas de cada grupo (= txs de ese día).
+            # reset_index(): convierte la Serie en DataFrame.
+            # rename(): renombra la columna 0 → 'txs' para que el eje Y tenga nombre.
+            txs_por_dia = (
+                df.groupby("dia")
+                .size()
+                .reset_index()
+                .rename(columns={0: "txs"})
+            )
+
+            # px.line: gráfico de línea de Plotly Express (API de alto nivel).
+            # markers=True añade un punto en cada fecha con dato.
+            fig_line = px.line(
+                txs_por_dia,
+                x="dia",
+                y="txs",
+                markers=True,
+                labels={"dia": "Fecha", "txs": "Transacciones"},
+            )
+            fig_line.update_traces(
+                line=dict(color="#22d3ee", width=2.5),
+                marker=dict(color="#22d3ee", size=8,
+                            line=dict(color="#0b0f1a", width=2))
+            )
+            fig_line.update_layout(
+                paper_bgcolor="rgba(0,0,0,0)",
+                plot_bgcolor="rgba(11,15,26,0.6)",
+                font=dict(color="#e5e7eb", family="Manrope"),
+                xaxis=dict(
+                    gridcolor="rgba(34,211,238,0.08)",
+                    tickfont=dict(color="#9ca3af")
+                ),
+                yaxis=dict(
+                    gridcolor="rgba(34,211,238,0.08)",
+                    tickfont=dict(color="#9ca3af"),
+                    tickformat="d"          # enteros, sin decimales en el eje Y
+                ),
+                margin=dict(t=20, b=20, l=10, r=10),
+                height=280
+            )
+            st.plotly_chart(fig_line, use_container_width=True)
+
+        # ── Fila 4: destinatarios por airdrop ────────────────────────────────
+        # Solo tiene sentido si hay al menos un airdrop con destinatarios registrados.
+        df_airdrops = df[(df["tipo"] == "Airdrop") & (df["destinatarios"].notna())].copy()
+
+        if not df_airdrops.empty:
+            with st.container(border=True):
+                st.markdown("#### Destinatarios por airdrop")
+                st.caption("Cada barra es un airdrop distinto. El eje Y muestra cuántas wallets recibieron tokens.")
+
+                # Formateamos el eje X con fecha + hash corto para identificar cada airdrop.
+                df_airdrops["etiqueta"] = (
+                    df_airdrops["fecha"].str[:10] + " · " +
+                    df_airdrops["tx_hash"].str[:8] + "..."
+                )
+
+                fig_dest = go.Figure(
+                    go.Bar(
+                        x=df_airdrops["etiqueta"],
+                        y=df_airdrops["destinatarios"].astype(int),
+                        marker=dict(
+                            color=df_airdrops["destinatarios"].astype(int),
+                            colorscale=[[0, "#0ea5e9"], [1, "#34d399"]],
+                            showscale=False,
+                            line=dict(color="rgba(34,211,238,0.3)", width=1)
+                        ),
+                        text=df_airdrops["destinatarios"].astype(int),
+                        textposition="outside",
+                        textfont=dict(color="#e5e7eb", size=12)
+                    )
+                )
+                fig_dest.update_layout(
+                    paper_bgcolor="rgba(0,0,0,0)",
+                    plot_bgcolor="rgba(11,15,26,0.6)",
+                    font=dict(color="#e5e7eb", family="Manrope"),
+                    xaxis=dict(
+                        gridcolor="rgba(34,211,238,0.08)",
+                        tickfont=dict(color="#9ca3af"),
+                        tickangle=-30
+                    ),
+                    yaxis=dict(
+                        gridcolor="rgba(34,211,238,0.08)",
+                        tickfont=dict(color="#9ca3af"),
+                        tickformat="d"
+                    ),
+                    margin=dict(t=20, b=60, l=10, r=10),
+                    height=300
+                )
+                st.plotly_chart(fig_dest, use_container_width=True)
