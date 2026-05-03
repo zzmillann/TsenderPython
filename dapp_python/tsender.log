@@ -63,3 +63,120 @@
 2026-05-03 17:43:01 | INFO     | web3_utils   | Wallet cargada — dirección: 0xa3387109E486822a0b7EB0b5d8bC6c556bC96c36
 2026-05-03 17:43:01 | DEBUG    | db           | Historial consultado — 10 registros devueltos
 2026-05-03 17:43:01 | DEBUG    | db           | Historial consultado — 10 registros devueltos
+2026-05-03 19:19:44 | INFO     | db           | Base de datos inicializada correctamente — ruta: C:\Users\enriq\Desktop\Proyecto Python\TsenderPython\dapp_python\historial.db
+2026-05-03 19:19:44 | INFO     | __main__     | Aplicación TSender iniciada
+2026-05-03 19:19:45 | INFO     | web3_utils   | Wallet cargada — dirección: 0xa3387109E486822a0b7EB0b5d8bC6c556bC96c36
+2026-05-03 19:19:46 | DEBUG    | db           | Historial consultado — 10 registros devueltos
+2026-05-03 19:20:03 | INFO     | db           | Base de datos inicializada correctamente — ruta: C:\Users\enriq\Desktop\Proyecto Python\TsenderPython\dapp_python\historial.db
+2026-05-03 19:20:03 | INFO     | __main__     | Aplicación TSender iniciada
+2026-05-03 19:20:03 | INFO     | web3_utils   | Wallet cargada — dirección: 0xa3387109E486822a0b7EB0b5d8bC6c556bC96c36
+2026-05-03 19:20:04 | DEBUG    | db           | Historial consultado — 10 registros devueltos
+2026-05-03 19:21:00 | INFO     | db           | Base de datos inicializada correctamente — ruta: C:\Users\enriq\Desktop\Proyecto Python\TsenderPython\dapp_python\historial.db
+2026-05-03 19:21:00 | INFO     | __main__     | Aplicación TSender iniciada
+2026-05-03 19:21:01 | INFO     | web3_utils   | Wallet cargada — dirección: 0xa3387109E486822a0b7EB0b5d8bC6c556bC96c36
+2026-05-03 19:21:02 | DEBUG    | db           | Historial consultado — 10 registros devueltos
+2026-05-03 19:21:02 | DEBUG    | db           | Historial consultado — 10 registros devueltos
+2026-05-03 19:21:11 | INFO     | db           | Base de datos inicializada correctamente — ruta: C:\Users\enriq\Desktop\Proyecto Python\TsenderPython\dapp_python\historial.db
+2026-05-03 19:21:11 | INFO     | __main__     | Aplicación TSender iniciada
+2026-05-03 19:21:11 | INFO     | web3_utils   | Wallet cargada — dirección: 0xa3387109E486822a0b7EB0b5d8bC6c556bC96c36
+2026-05-03 19:21:11 | INFO     | db           | Base de datos inicializada correctamente — ruta: C:\Users\enriq\Desktop\Proyecto Python\TsenderPython\dapp_python\historial.db
+2026-05-03 19:21:11 | INFO     | __main__     | Aplicación TSender iniciada
+2026-05-03 19:21:11 | INFO     | web3_utils   | Wallet cargada — dirección: 0xa3387109E486822a0b7EB0b5d8bC6c556bC96c36
+2026-05-03 19:21:12 | DEBUG    | db           | Historial consultado — 10 registros devueltos
+2026-05-03 19:21:12 | DEBUG    | db           | Historial consultado — 10 registros devueltos
+2026-05-03 19:21:17 | INFO     | db           | Base de datos inicializada correctamente — ruta: C:\Users\enriq\Desktop\Proyecto Python\TsenderPython\dapp_python\historial.db
+2026-05-03 19:21:17 | INFO     | __main__     | Aplicación TSender iniciada
+2026-05-03 19:21:17 | INFO     | web3_utils   | Wallet cargada — dirección: 0xa3387109E486822a0b7EB0b5d8bC6c556bC96c36
+2026-05-03 19:21:18 | INFO     | db           | Base de datos inicializada correctamente — ruta: C:\Users\enriq\Desktop\Proyecto Python\TsenderPython\dapp_python\historial.db
+2026-05-03 19:21:18 | INFO     | __main__     | Aplicación TSender iniciada
+2026-05-03 19:21:18 | INFO     | web3_utils   | Wallet cargada — dirección: 0xa3387109E486822a0b7EB0b5d8bC6c556bC96c36
+2026-05-03 19:21:19 | ERROR    | __main__     | Error en donación a 8989: Unknown format '8989', attempted to normalize to '0x8989'
+2026-05-03 19:21:19 | INFO     | db           | Base de datos inicializada correctamente — ruta: C:\Users\enriq\Desktop\Proyecto Python\TsenderPython\dapp_python\historial.db
+2026-05-03 19:21:19 | INFO     | __main__     | Aplicación TSender iniciada
+2026-05-03 19:21:19 | INFO     | web3_utils   | Wallet cargada — dirección: 0xa3387109E486822a0b7EB0b5d8bC6c556bC96c36
+2026-05-03 19:21:20 | DEBUG    | db           | Historial consultado — 10 registros devueltos
+2026-05-03 19:21:20 | DEBUG    | db           | Historial consultado — 10 registros devueltos
+2026-05-03 19:21:36 | INFO     | db           | Base de datos inicializada correctamente — ruta: C:\Users\enriq\Desktop\Proyecto Python\TsenderPython\dapp_python\historial.db
+2026-05-03 19:21:36 | INFO     | __main__     | Aplicación TSender iniciada
+2026-05-03 19:21:36 | INFO     | web3_utils   | Wallet cargada — dirección: 0xa3387109E486822a0b7EB0b5d8bC6c556bC96c36
+2026-05-03 19:21:36 | INFO     | db           | Base de datos inicializada correctamente — ruta: C:\Users\enriq\Desktop\Proyecto Python\TsenderPython\dapp_python\historial.db
+2026-05-03 19:21:36 | INFO     | __main__     | Aplicación TSender iniciada
+2026-05-03 19:21:36 | INFO     | web3_utils   | Wallet cargada — dirección: 0xa3387109E486822a0b7EB0b5d8bC6c556bC96c36
+2026-05-03 19:21:37 | WARNING  | __main__     | Airdrop cancelado: campos incompletos
+2026-05-03 19:21:37 | DEBUG    | db           | Historial consultado — 10 registros devueltos
+2026-05-03 19:21:38 | DEBUG    | db           | Historial consultado — 10 registros devueltos
+2026-05-03 19:22:24 | INFO     | db           | Base de datos inicializada correctamente — ruta: C:\Users\enriq\Desktop\Proyecto Python\TsenderPython\dapp_python\historial.db
+2026-05-03 19:22:24 | INFO     | __main__     | Aplicación TSender iniciada
+2026-05-03 19:22:24 | INFO     | web3_utils   | Wallet cargada — dirección: 0xa3387109E486822a0b7EB0b5d8bC6c556bC96c36
+2026-05-03 19:22:25 | DEBUG    | db           | Historial consultado — 10 registros devueltos
+2026-05-03 19:22:25 | DEBUG    | __main__     | Visor de logs actualizado manualmente por el usuario
+2026-05-03 19:22:25 | INFO     | db           | Base de datos inicializada correctamente — ruta: C:\Users\enriq\Desktop\Proyecto Python\TsenderPython\dapp_python\historial.db
+2026-05-03 19:22:25 | INFO     | __main__     | Aplicación TSender iniciada
+2026-05-03 19:22:25 | INFO     | web3_utils   | Wallet cargada — dirección: 0xa3387109E486822a0b7EB0b5d8bC6c556bC96c36
+2026-05-03 19:22:26 | DEBUG    | db           | Historial consultado — 10 registros devueltos
+2026-05-03 19:22:26 | DEBUG    | db           | Historial consultado — 10 registros devueltos
+2026-05-03 19:22:26 | INFO     | db           | Base de datos inicializada correctamente — ruta: C:\Users\enriq\Desktop\Proyecto Python\TsenderPython\dapp_python\historial.db
+2026-05-03 19:22:26 | INFO     | __main__     | Aplicación TSender iniciada
+2026-05-03 19:22:26 | INFO     | web3_utils   | Wallet cargada — dirección: 0xa3387109E486822a0b7EB0b5d8bC6c556bC96c36
+2026-05-03 19:22:27 | DEBUG    | db           | Historial consultado — 10 registros devueltos
+2026-05-03 19:22:27 | DEBUG    | db           | Historial consultado — 10 registros devueltos
+2026-05-03 19:24:44 | INFO     | db           | Base de datos inicializada correctamente — ruta: C:\Users\enriq\Desktop\Proyecto Python\TsenderPython\dapp_python\historial.db
+2026-05-03 19:24:44 | INFO     | __main__     | Aplicación TSender iniciada
+2026-05-03 19:24:45 | INFO     | web3_utils   | Wallet cargada — dirección: 0xa3387109E486822a0b7EB0b5d8bC6c556bC96c36
+2026-05-03 19:24:46 | INFO     | web3_utils   | Deploy enviado — contrato: CosaToken | hash: 0xc8b58279950537560ce0b69ada9fea55cb57479d7e8b87250761ed84faf5586e
+2026-05-03 19:24:48 | INFO     | web3_utils   | Deploy confirmado — CosaToken desplegado en: 0xa6b64e62F0C1fD7c38F01343AcfdCA60c216A437
+2026-05-03 19:24:48 | INFO     | db           | TX guardada — tipo: Deploy Token | estado: éxito | hash: 0xc8b5827995... | desde: 0xa3387109E486822a0b7EB0b5d8bC6c556bC96c36 | destinatarios: None
+2026-05-03 19:24:48 | DEBUG    | db           | Historial consultado — 11 registros devueltos
+2026-05-03 19:24:49 | DEBUG    | db           | Historial consultado — 11 registros devueltos
+2026-05-03 19:25:14 | INFO     | db           | Base de datos inicializada correctamente — ruta: C:\Users\enriq\Desktop\Proyecto Python\TsenderPython\dapp_python\historial.db
+2026-05-03 19:25:14 | INFO     | __main__     | Aplicación TSender iniciada
+2026-05-03 19:25:14 | INFO     | web3_utils   | Wallet cargada — dirección: 0xa3387109E486822a0b7EB0b5d8bC6c556bC96c36
+2026-05-03 19:25:15 | DEBUG    | db           | Historial consultado — 11 registros devueltos
+2026-05-03 19:25:15 | DEBUG    | db           | Historial consultado — 11 registros devueltos
+2026-05-03 19:26:55 | INFO     | db           | Base de datos inicializada correctamente — ruta: C:\Users\enriq\Desktop\Proyecto Python\TsenderPython\dapp_python\historial.db
+2026-05-03 19:26:55 | INFO     | __main__     | Aplicación TSender iniciada
+2026-05-03 19:26:56 | INFO     | web3_utils   | Wallet cargada — dirección: 0xa3387109E486822a0b7EB0b5d8bC6c556bC96c36
+2026-05-03 19:26:56 | DEBUG    | db           | Historial consultado — 11 registros devueltos
+2026-05-03 19:26:56 | DEBUG    | db           | Historial consultado — 11 registros devueltos
+2026-05-03 19:27:56 | INFO     | db           | Base de datos inicializada correctamente — ruta: C:\Users\enriq\Desktop\Proyecto Python\TsenderPython\dapp_python\historial.db
+2026-05-03 19:27:56 | INFO     | __main__     | Aplicación TSender iniciada
+2026-05-03 19:27:56 | INFO     | web3_utils   | Wallet cargada — dirección: 0xa3387109E486822a0b7EB0b5d8bC6c556bC96c36
+2026-05-03 19:27:58 | INFO     | web3_utils   | Deploy enviado — contrato: Airdrop | hash: 0x708ac1710c84b4c2b29671f19dcb4f434c87deb5cca2f15d78fe57ba6f0666d1
+2026-05-03 19:28:25 | INFO     | web3_utils   | Deploy confirmado — Airdrop desplegado en: 0x9d14e966fAbF047801328cd65465012265a625fb
+2026-05-03 19:28:25 | INFO     | db           | TX guardada — tipo: Deploy Airdrop | estado: éxito | hash: 0x708ac1710c... | desde: 0xa3387109E486822a0b7EB0b5d8bC6c556bC96c36 | destinatarios: None
+2026-05-03 19:29:15 | INFO     | db           | Base de datos inicializada correctamente — ruta: C:\Users\enriq\Desktop\Proyecto Python\TsenderPython\dapp_python\historial.db
+2026-05-03 19:29:15 | INFO     | db           | Base de datos inicializada correctamente — ruta: C:\Users\enriq\Desktop\Proyecto Python\TsenderPython\dapp_python\historial.db
+2026-05-03 19:29:15 | INFO     | __main__     | Aplicación TSender iniciada
+2026-05-03 19:29:15 | INFO     | __main__     | Aplicación TSender iniciada
+2026-05-03 19:29:15 | INFO     | __main__     | Aplicación TSender iniciada
+2026-05-03 19:29:15 | INFO     | __main__     | Aplicación TSender iniciada
+2026-05-03 19:29:15 | INFO     | web3_utils   | Wallet cargada — dirección: 0xa3387109E486822a0b7EB0b5d8bC6c556bC96c36
+2026-05-03 19:29:16 | DEBUG    | db           | Historial consultado — 12 registros devueltos
+2026-05-03 19:29:17 | DEBUG    | db           | Historial consultado — 12 registros devueltos
+2026-05-03 19:29:17 | INFO     | web3_utils   | Wallet cargada — dirección: 0xa3387109E486822a0b7EB0b5d8bC6c556bC96c36
+2026-05-03 19:29:18 | DEBUG    | db           | Historial consultado — 12 registros devueltos
+2026-05-03 19:29:18 | DEBUG    | db           | Historial consultado — 12 registros devueltos
+2026-05-03 19:29:37 | INFO     | db           | Base de datos inicializada correctamente — ruta: C:\Users\enriq\Desktop\Proyecto Python\TsenderPython\dapp_python\historial.db
+2026-05-03 19:29:37 | INFO     | __main__     | Aplicación TSender iniciada
+2026-05-03 19:29:37 | INFO     | __main__     | Aplicación TSender iniciada
+2026-05-03 19:29:37 | INFO     | web3_utils   | Wallet cargada — dirección: 0xa3387109E486822a0b7EB0b5d8bC6c556bC96c36
+2026-05-03 19:29:38 | DEBUG    | db           | Historial consultado — 12 registros devueltos
+2026-05-03 19:29:38 | DEBUG    | db           | Historial consultado — 12 registros devueltos
+2026-05-03 19:29:47 | INFO     | db           | Base de datos inicializada correctamente — ruta: C:\Users\enriq\Desktop\Proyecto Python\TsenderPython\dapp_python\historial.db
+2026-05-03 19:29:47 | INFO     | __main__     | Aplicación TSender iniciada
+2026-05-03 19:29:47 | INFO     | __main__     | Aplicación TSender iniciada
+2026-05-03 19:29:47 | INFO     | web3_utils   | Wallet cargada — dirección: 0xa3387109E486822a0b7EB0b5d8bC6c556bC96c36
+2026-05-03 19:29:48 | INFO     | web3_utils   | Deploy enviado — contrato: CosaToken | hash: 0xd015f3fc66883735806f057b87c44c6cfa44e58f38e86efc0b64659934526578
+2026-05-03 19:30:01 | INFO     | web3_utils   | Deploy confirmado — CosaToken desplegado en: 0x5657991B7a85287ff78Ae72953cc72cEC9Bd9657
+2026-05-03 19:30:01 | INFO     | db           | TX guardada — tipo: Deploy Token | estado: éxito | hash: 0xd015f3fc66... | desde: 0xa3387109E486822a0b7EB0b5d8bC6c556bC96c36 | destinatarios: None
+2026-05-03 19:30:01 | DEBUG    | db           | Historial consultado — 13 registros devueltos
+2026-05-03 19:30:01 | DEBUG    | db           | Historial consultado — 13 registros devueltos
+2026-05-03 19:30:03 | INFO     | db           | Base de datos inicializada correctamente — ruta: C:\Users\enriq\Desktop\Proyecto Python\TsenderPython\dapp_python\historial.db
+2026-05-03 19:30:03 | INFO     | __main__     | Aplicación TSender iniciada
+2026-05-03 19:30:03 | INFO     | __main__     | Aplicación TSender iniciada
+2026-05-03 19:30:03 | INFO     | web3_utils   | Wallet cargada — dirección: 0xa3387109E486822a0b7EB0b5d8bC6c556bC96c36
+2026-05-03 19:30:04 | INFO     | web3_utils   | Deploy enviado — contrato: Airdrop | hash: 0xe5ed9113a3d64c5ceb363ac68b5289ec94b4092b04d8087b651379815590c318
+2026-05-03 19:30:14 | INFO     | web3_utils   | Deploy confirmado — Airdrop desplegado en: 0x95b1D2bc64C8c4c6B6E82045060932fEc3BA6deb
+2026-05-03 19:30:14 | INFO     | db           | TX guardada — tipo: Deploy Airdrop | estado: éxito | hash: 0xe5ed9113a3... | desde: 0xa3387109E486822a0b7EB0b5d8bC6c556bC96c36 | destinatarios: None
+2026-05-03 19:30:14 | DEBUG    | db           | Historial consultado — 14 registros devueltos
+2026-05-03 19:30:14 | DEBUG    | db           | Historial consultado — 14 registros devueltos

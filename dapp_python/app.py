@@ -847,8 +847,22 @@ with tab2:
                     st.metric("Coste total estimado", f"{est['cost_eth']:.8f} ETH")
                     st.caption("gas_units × gas_price")
 
+    def centered_airdrop_action_buttons() -> tuple[bool, bool]:
+        """Renderiza los dos botones de acción centrados y en horizontal."""
+        _left, _center, _right = st.columns([1, 2, 1])
+        with _center:
+            btn_col_1, btn_col_2 = st.columns(2, gap="medium")
+            with btn_col_1:
+                approve_pressed = st.button("1. Aprobar airdrop", key="btn_approve_airdrop", use_container_width=True)
+            with btn_col_2:
+                send_pressed = st.button("2. Enviar airdrop", key="btn_send_airdrop", use_container_width=True)
+        return approve_pressed, send_pressed
+
+    # Botones de acción: centrados y lado a lado.
+    approve_clicked, send_clicked = centered_airdrop_action_buttons()
+
     # Botón 1: aprueba que el contrato de airdrop pueda mover tokens del usuario.
-    if st.button("1. Aprobar airdrop"):
+    if approve_clicked:
         if not token_address or not airdrop_contract:
             logger.warning("Approve cancelado: faltan token_address o airdrop_contract")
             st.error("Faltan direcciones.")
@@ -867,7 +881,7 @@ with tab2:
 
     # Botón 2: ejecuta el airdrop en cadena con receptores y montos.
     # Se bloquea si la validación en tiempo real detectó direcciones inválidas.
-    if st.button("2. Enviar airdrop"):
+    if send_clicked:
         if not airdrop_contract or not token_address or not recipients or not amounts:
             logger.warning("Airdrop cancelado: campos incompletos")
             st.error("Rellena todos los campos.")
@@ -940,41 +954,69 @@ with tab3:
     # TAB 3: despliegue de contratos inteligentes desde la misma interfaz.
     st.markdown("<div class='section-title'>Deploy de Contratos</div>", unsafe_allow_html=True)
     st.markdown("<div class='section-helper'>Publica contratos directamente desde la interfaz usando tu configuración Web3.</div>", unsafe_allow_html=True)
-    st.markdown("### Lanzar contratos inteligentes")
+    st.markdown(
+        "<div class='section-helper' style='text-align:center;margin-bottom:1.1rem;'>"
+        "Elige qué contrato desplegar. Cada acción envía una transacción on-chain y guarda el resultado en el historial local."
+        "</div>",
+        unsafe_allow_html=True,
+    )
 
-    col1, col2 = st.columns(2)
+    # Layout centrado: dos cards horizontales en columnas centrales.
+    outer_left, col_token, col_airdrop, outer_right = st.columns([1, 4, 4, 1], gap="large")
 
-    with col1:
-        st.markdown("#### 1. Cosa Token")
-        # Botón de despliegue del contrato de token.
-        if st.button("Lanzar token"):
-            try:
-                with st.spinner("Desplegando Token..."):
-                    # Llamada backend: deploy_contract('CosaToken') publica el contrato.
-                    res = w3_manager.deploy_contract('CosaToken')
-                    # Guardamos el deploy del token en el historial
-                    save_tx("Deploy Token", res['tx_hash'], desde=w3_manager.get_address(), contrato=res['address'])
-                    st.success(f"Token en: `{res['address']}`")
-                    st.code(res['address'])
-            except Exception as e:
-                logger.error("Error desplegando CosaToken: %s", e)
-                st.error(f"Error: {e}")
+    with col_token:
+        with st.container(border=True, height=320):
+            st.markdown("### 🪙 Cosa Token")
+            st.caption("Contrato ERC-20 para emitir y transferir tokens de prueba en la red configurada.")
+            st.markdown(
+                "<div class='section-helper' style='margin-top:0.35rem;'>"
+                "Ideal para preparar pruebas de distribución antes del airdrop masivo."
+                "</div>",
+                unsafe_allow_html=True,
+            )
 
-    with col2:
-        st.markdown("#### 2. Airdrop Contract")
-        # Botón de despliegue del contrato de airdrop.
-        if st.button("Lanzar airdrop"):
-            try:
-                with st.spinner("Desplegando Airdrop..."):
-                    # Llamada backend: deploy_contract('Airdrop') publica el contrato.
-                    res = w3_manager.deploy_contract('Airdrop')
-                    # Guardamos el deploy del contrato airdrop en el historial
-                    save_tx("Deploy Airdrop", res['tx_hash'], desde=w3_manager.get_address(), contrato=res['address'])
-                    st.success(f"Airdrop en: `{res['address']}`")
-                    st.code(res['address'])
-            except Exception as e:
-                logger.error("Error desplegando Airdrop: %s", e)
-                st.error(f"Error: {e}")
+            btn_left, btn_center, btn_right = st.columns([1, 2, 1])
+            with btn_center:
+                # Botón de despliegue del contrato de token.
+                if st.button("🚀 Lanzar token", key="deploy_token_btn", use_container_width=True):
+                    try:
+                        with st.spinner("Desplegando Token..."):
+                            # Llamada backend: deploy_contract('CosaToken') publica el contrato.
+                            res = w3_manager.deploy_contract('CosaToken')
+                            # Guardamos el deploy del token en el historial
+                            save_tx("Deploy Token", res['tx_hash'], desde=w3_manager.get_address(), contrato=res['address'])
+                            st.success(f"Token en: `{res['address']}`")
+                            st.code(res['address'])
+                    except Exception as e:
+                        logger.error("Error desplegando CosaToken: %s", e)
+                        st.error(f"Error: {e}")
+
+    with col_airdrop:
+        with st.container(border=True, height=320):
+            st.markdown("### 🌐 Airdrop Contract")
+            st.caption("Contrato de distribución masiva para enviar tokens a múltiples destinatarios en una sola transacción.")
+            st.markdown(
+                "<div class='section-helper' style='margin-top:0.35rem;'>"
+                "Despliega este contrato y luego úsalo en la pestaña de Airdrop para ejecutar envíos en lote."
+                "</div>",
+                unsafe_allow_html=True,
+            )
+
+            btn_left, btn_center, btn_right = st.columns([1, 2, 1])
+            with btn_center:
+                # Botón de despliegue del contrato de airdrop.
+                if st.button("⚡ Lanzar airdrop", key="deploy_airdrop_btn", use_container_width=True):
+                    try:
+                        with st.spinner("Desplegando Airdrop..."):
+                            # Llamada backend: deploy_contract('Airdrop') publica el contrato.
+                            res = w3_manager.deploy_contract('Airdrop')
+                            # Guardamos el deploy del contrato airdrop en el historial
+                            save_tx("Deploy Airdrop", res['tx_hash'], desde=w3_manager.get_address(), contrato=res['address'])
+                            st.success(f"Airdrop en: `{res['address']}`")
+                            st.code(res['address'])
+                    except Exception as e:
+                        logger.error("Error desplegando Airdrop: %s", e)
+                        st.error(f"Error: {e}")
 
 with tab4:
     # TAB 4: historial de transacciones persistidas en SQLite.
